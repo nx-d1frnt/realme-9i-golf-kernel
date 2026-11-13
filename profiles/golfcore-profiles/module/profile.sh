@@ -43,7 +43,7 @@ guard() {
         [ "$(getprop ro.product.model)" = RMX3491 ] || die 'Only RMX3491 is supported'
         ;; *) [ -d "$ROOT/proc" ] || die 'Invalid test root';;
     esac
-    grep -q '4.19.157-perf+ (golfcore@' "$ROOT/proc/version" || die 'GolfCore kernel required'
+    grep -Eq '^Linux version 4[.]19[.]157-(perf[+]|GolfCore-v[0-9][^ ]*) [(]golfcore@' "$ROOT/proc/version" || die 'GolfCore kernel required'
     BOOT=$(boot_id) || die 'Cannot read boot ID'
     case "$BOOT" in ''|*[!a-fA-F0-9-]*) die 'Invalid boot ID';; esac
 }

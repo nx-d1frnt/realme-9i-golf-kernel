@@ -1,8 +1,8 @@
 {
-  "module": "GolfCore Profiles v0.1.0",
+  "module": "GolfCore Profiles v0.1.1",
   "tested_device": "Realme 9i 4G / RMX3491",
   "kernel": "GolfCore v0.2.0-rc1",
-  "host_tests_passed": 11,
+  "host_tests_passed": 13,
   "host_selection_transitions": 36,
   "device_combinations_passed": 6,
   "exact_restore_after_each_combination": true,
@@ -37,5 +37,8 @@
   "service_sh_manual_run_passed": true,
   "reboot_with_module_tested": false,
   "controlled_performance_comparison": false,
-  "battery_improvement_measured": false
+  "battery_improvement_measured": false,
+  "renamed_kernel_guard_checked_on_host": true,
+  "runtime_checks_kernel_release": "4.19.157-perf+",
+  "golfcore_v03_device_tested": false
 }

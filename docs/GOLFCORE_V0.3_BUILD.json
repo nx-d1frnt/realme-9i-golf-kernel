@@ -1,0 +1,54 @@
+{
+  "name": "GolfCore v0.3.0-rc1 Balanced",
+  "kernel_version": "Linux version 4.19.157-GolfCore-v0.3 (golfcore@balanced-v0.3-rc1) (Android (6443078 based on r383902) clang version 11.0.1 (https://android.googlesource.com/toolchain/llvm-project b397f81060ce6d701042b782172ed13bee898b79), GNU ld (GNU Binutils) 2.36.1) #3 SMP PREEMPT Sat Nov 14 00:38:38 EET 2026",
+  "kernel_sha256": "2bdba1bae8385cb717062968258698bf4549889e9324381b4282672840cc6b8e",
+  "boot": {
+    "image": "boot-golfcore-v0.3.0-rc1-rmx3491-dfe.img",
+    "bytes": 167772160,
+    "kernel_release": "4.19.157-GolfCore-v0.3",
+    "sha256": "22e6091c55f60e1a650a56b5c055870574b2a9a23c7aa9a3ddce7d67096bed14",
+    "base_boot_sha256": "392bdb8a70d1d91d6a4c4d4c4b7cd4a11f6e6a11ff6f84dbb4e8d9e1529462e9",
+    "kernel_sha256": "2bdba1bae8385cb717062968258698bf4549889e9324381b4282672840cc6b8e",
+    "unchanged_components": {
+      "ramdisk.cpio": "229c027197474d3eedd892bc97e44649092d59939cf7a838d6092d3b62d7caa5",
+      "dtb": "202302a72f68f1f986196e73f83ee9de6500492f2ebfe4ff7867c3a725751885",
+      "header": "39fc5b205871f83fd5cd24ebc6e1fbf960f01a41e8a0c7246b88e4dde4155a34"
+    },
+    "all_vendor_import_crcs_match": true,
+    "fbe_disabled": true,
+    "checkpoint_fs_preserved": true,
+    "device_tested": false
+  },
+  "vendor_abi": {
+    "modules": 33,
+    "imports": 2087,
+    "all_match": true
+  },
+  "branded_release_loader_check": {
+    "modules": 33,
+    "all_match": true,
+    "loader_modified": false,
+    "force_load_enabled": false
+  },
+  "lz4": {
+    "version": "1.10.0",
+    "donor_commit": "9e014b100dfc999ad599337b807af5fffd11f573",
+    "asan_round_trips": 680,
+    "buffer_and_malformed_checks": 13380,
+    "workspace_bytes_old": 16416,
+    "workspace_bytes_new": 16416,
+    "stack_workspace_eliminated": true
+  },
+  "previous_regressions": {
+    "touch": 32,
+    "allocator": 16
+  },
+  "profile_module": {
+    "version": "v0.1.1",
+    "host_tests": 13,
+    "installed_on_current_v02_kernel": true,
+    "existing_selection_preserved": true
+  },
+  "device_tested_with_v03": false,
+  "performance_improvement_measured": false
+}

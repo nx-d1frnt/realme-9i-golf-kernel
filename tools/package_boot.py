@@ -4,6 +4,7 @@ import argparse
 import gzip
 import hashlib
 import json
+import re
 from pathlib import Path
 import shutil
 import subprocess
@@ -13,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--base-boot', required=True, type=Path)
 parser.add_argument('--base-sha256')
+parser.add_argument('--kernel-release', default='4.19.157-GolfCore-v0.3')
 parser.add_argument('--kernel', type=Path, default=ROOT / 'artifacts/Image.gz')
 parser.add_argument('--abi-report', type=Path, default=ROOT / 'artifacts/vendor-abi.json')
 parser.add_argument('--magiskboot', required=True, type=Path)
@@ -42,7 +44,8 @@ base_sha = sha(boot)
 if args.base_sha256 and args.base_sha256 != base_sha:
     raise SystemExit('Base boot SHA-256 mismatch')
 raw = gzip.decompress(kernel.read_bytes())
-if b'Linux version 4.19.157-perf+' not in raw:
+releases = set(re.findall(rb'Linux version ([0-9]+[.][0-9]+[.][0-9]+[^\x00\n ]*) [(]', raw))
+if releases != {args.kernel_release.encode()}:
     raise SystemExit('Unexpected kernel release')
 if (ROOT / 'certs/stock-module-cert.der').read_bytes() not in raw:
     raise SystemExit('Stock module certificate is missing from Image')
@@ -86,6 +89,7 @@ with tempfile.TemporaryDirectory(prefix='rmx3491-boot-') as temporary:
         if 'checkpoint=fs' not in data[0]:
             raise SystemExit('Expected checkpoint=fs in the working base')
         result = {'image': output.name, 'bytes': partial.stat().st_size,
+                  'kernel_release': args.kernel_release,
                   'sha256': sha(partial), 'base_boot_sha256': base_sha,
                   'kernel_sha256': kernel_sha, 'unchanged_components': preserved,
                   'all_vendor_import_crcs_match': True, 'fbe_disabled': True,

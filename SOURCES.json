@@ -13,6 +13,43 @@
     "03-mm-feedback-legacy-abi.patch": "396a8a82e27b2fb11d002f7c9fb0c3b34dbb221b06188ae79936ccdc6e4eab59",
     "04-ion-drop-empty-constructor.patch": "7168dff1715e1e7f1590dd5c1a62bdd7ac8a2fcaaa3355fead45bc971e21d87c",
     "05-zram-validate-allocator-flags.patch": "61f352ed2bbb8b80c8dec4b134268b924339fda384873400714a667fb44ad450",
-    "06-touch-resume-irq-lifetime.patch": "e253ca94d776326c529c25db901147f21068c8532d2720c9d2b1acf96205dcb7"
+    "06-touch-resume-irq-lifetime.patch": "e253ca94d776326c529c25db901147f21068c8532d2720c9d2b1acf96205dcb7",
+    "07-lz4-v1.10-neutrino.patch": "e2bfc8307abcea4561782f821acc1f3180949fb5cc36d5d2bda545c823ff44a3"
+  },
+  "lz4_donor": {
+    "repository": "https://github.com/Madara273/Redmi-Note-11-Kernel",
+    "branch": "Neutrino_r05",
+    "commit": "9e014b100dfc999ad599337b807af5fffd11f573",
+    "files": {
+      "Makefile": {
+        "bytes": 66067,
+        "sha256": "5d81ea6ce9397adebeccf406e8c3b54362c8287ab1bb441df57a8a690b4b9128"
+      },
+      "lib/lz4/lz4.c": {
+        "bytes": 113738,
+        "sha256": "99e68f75c3b6441a2e2712aaa440399f812fea212843a27788d547bee8d83be6"
+      },
+      "lib/lz4/lz4.h": {
+        "bytes": 46694,
+        "sha256": "4a82c2463f6fd1bb6ce983a6a5e435d2de4db183ba25cf145c6b9eeec31f7f24"
+      },
+      "lib/lz4/lz4hc.c": {
+        "bytes": 90892,
+        "sha256": "dcb9740c89526f6874432cb8d6372a2b5a3f1c15360c20daa2cfcd1e9cc48828"
+      },
+      "lib/lz4/lz4hc.h": {
+        "bytes": 20322,
+        "sha256": "ddc57e7b03bd47f02f84ab7cf42884cc35b25667c804f3e47b9913d9fb389731"
+      },
+      "lib/lz4/Makefile": {
+        "bytes": 96,
+        "sha256": "51642afc0a04350b49ef0fa210b0a1899f80bb9267a786a6206c7e7e30757f70"
+      },
+      "include/linux/lz4.h": {
+        "bytes": 390,
+        "sha256": "8529259e9e4f2d245c2431ffbb94060910d7f7c4c16d60c48934e88af290973a"
+      }
+    },
+    "declared_lz4_version": "1.10.0"
   }
 }

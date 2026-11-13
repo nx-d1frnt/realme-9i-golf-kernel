@@ -1,0 +1,203 @@
+{
+  "loader_function": "static inline int same_magic(const char *amagic, const char *bmagic,\n\t\t\t     bool has_crcs)\n{\n\tif (has_crcs) {\n\t\tamagic += strcspn(amagic, \" \");\n\t\tbmagic += strcspn(bmagic, \" \");\n\t}\n\treturn strcmp(amagic, bmagic) == 0;\n}",
+  "modules": [
+    {
+      "name": "audio_adsp_loader.ko",
+      "sha256": "5d5b4296a97d69b14de4c8760e50dbaa6b5083bcc60d3d2252216bce1d8d224b",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_apr.ko",
+      "sha256": "992c928e10e3423ced77499d433e2b70f9aaa5630c8e5b8decd31fc5061260ee",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_aw87xxx.ko",
+      "sha256": "3613a2c0bbfe37de8a7824c540a93fc5447829ac4c4032186e81ce999b4b6199",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_aw882xx.ko",
+      "sha256": "a6dfe9dc79fe5023b668c634ecd2fca8e439596a3ba0c151da0c9738bffacf1a",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_bolero_cdc.ko",
+      "sha256": "4ff78be63c3baf8c633ef3c150868447d3b64ab5cd33bde390c208b5dbde2093",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_machine_bengal.ko",
+      "sha256": "056ef5f9939bbf4f6256bb146c32b9f1216b2c31054895c9b9c5e766b13d843f",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_mbhc.ko",
+      "sha256": "97771de624ca48d9d9430039dcf64097fa078135ad251dd73737708de772108a",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_native.ko",
+      "sha256": "357b03b25d0627427d976e5643ff72196582fb6a1bd2372fd496b1e11f564bfc",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_pa_manager.ko",
+      "sha256": "5978dab2a06ee67453c6fd2d4312aa539d4ad9cff561390ba4ef1ad2d0dc129c",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_pinctrl_lpi.ko",
+      "sha256": "48968d4799b58fff550009f1a374383b149deb13fb07eee73b4f28f75949f49b",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_platform.ko",
+      "sha256": "d045eec976d478467b9f42e96d1c92b1e5546d466cc35c8a29d8902e9361c04d",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_pm2250_spmi.ko",
+      "sha256": "d51651e1cbb4cdbe5f47dd145cf9c26e2852ec0489e946815781fa206309c614",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_q6.ko",
+      "sha256": "5fc970de93318659ed0df755638a48e6649a56f8177a217042015d5577ba0519",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_q6_notifier.ko",
+      "sha256": "9cd347317d98be331ccf994a56a55adf2307ef0774c612e00cb5c2b61bdb5471",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_q6_pdr.ko",
+      "sha256": "9a57b6c76dda51d0daf24dab0ce2698e99db4d393d36197f16457c1c2114df13",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_rouleur.ko",
+      "sha256": "35fb586b551b9517d08824e8d9e098dbb8d2112e5be746bf3d8cbc79f246631f",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_rouleur_slave.ko",
+      "sha256": "6181de101cb9914a1c81c29afe6da359d8403cb8c485c23a5f10db24bf78387a",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_rx_macro.ko",
+      "sha256": "52a931b9c594208dd5cca402cfa85947b326f6a1e924b0c2dcb28742462cb34a",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_sia81xx.ko",
+      "sha256": "14fb45f0ff649a7177fac68fada1c860f4a0959022f1f5d902fde70db7ca98dc",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_snd_event.ko",
+      "sha256": "1bbc6c4e8d878fd59694027270145c183096743690ef03ce6587edc45fd61eb5",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_stub.ko",
+      "sha256": "eab489409edb9fb799f57254d9bb7b3d0aa7592c03d5b8b9e33c62f02ea4d702",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_swr.ko",
+      "sha256": "62975f45f22f9b4c24015a34285d603a51878df0002f4f78948e751449c1d3b6",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_swr_ctrl.ko",
+      "sha256": "a3369170316e01c8008cce609736ef4f3b35938d3a8cc2b64fe75ff8ca9e72f2",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_tx_macro.ko",
+      "sha256": "0c04d52ad0a66e329b28bf4d5fd7a5aa52c38c390fba29732f20e9a4c97bf84b",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_usf.ko",
+      "sha256": "b35732a946d676faca0074a03809225ecfcb5a955a4b350aac01d25f8d1174a7",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_va_macro.ko",
+      "sha256": "e5134e3ad2f10fe5ae26632eb8b53e1bd6e94370857467bdc935de543fa71fbf",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_wcd937x.ko",
+      "sha256": "72d865c365ba88615a717ef90b5ce74be26c9108e6a38844a65b3aa8d18966c2",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_wcd937x_slave.ko",
+      "sha256": "a133754b94734c288252b1e08ef8018f5432de05159994b151a2df095dc5f7bb",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_wcd9xxx.ko",
+      "sha256": "273caa2a86228725f13bcad39d30b229a53de2a7e497b4e51dc127f36dcdd16f",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_wcd_core.ko",
+      "sha256": "a82f4d4da488e246fe60d082d6437e3c6c6313d9e14bd4a823abf4e445ae22f5",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "audio_wsa881x_analog.ko",
+      "sha256": "9596adfa6e5320da46b2d590f0dcc6f7e94ae1bc9571684195353e7554f2d99b",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "qca_cld3_wlan.ko",
+      "sha256": "7ed6059d8afc7922362ef6a2e3810bf835fde7526ef33a813856dd9b3042429e",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    },
+    {
+      "name": "rdbg.ko",
+      "sha256": "9bed425c42166cd9ebfd13767cd8a6611ba56f462b377fa775a0486eaa869496",
+      "vermagic": "4.19.157-perf+ SMP preempt mod_unload modversions aarch64",
+      "has_versions_section": true
+    }
+  ]
+}

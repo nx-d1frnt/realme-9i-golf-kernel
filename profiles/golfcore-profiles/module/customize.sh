@@ -1,6 +1,6 @@
 [ "$BOOTMODE" = true ] || abort 'Install from the Magisk app only'
 [ "$(getprop ro.product.model)" = RMX3491 ] || abort 'Only RMX3491 is supported'
-grep -q '4.19.157-perf+ (golfcore@' /proc/version || abort 'GolfCore kernel required'
+grep -Eq '^Linux version 4[.]19[.]157-(perf[+]|GolfCore-v[0-9][^ ]*) [(]golfcore@' /proc/version || abort 'GolfCore kernel required'
 ui_print 'GolfCore Profiles: Balanced / Battery / Gaming'
 ui_print 'Memory: stock / experimental balanced; restore is available'
 mkdir -p "$MODPATH/state"

@@ -154,6 +154,18 @@ class Profiles(unittest.TestCase):
         self.run_profile('apply', 'battery', ok=False)
         self.assertEqual(self.values(), BASE)
 
+    def test_branded_release_accepts_golfcore_and_restores(self):
+        self.write('/proc/version', 'Linux version 4.19.157-GolfCore-v0.3 (golfcore@balanced-v0.3-rc1)')
+        self.run_profile('apply', 'battery', 'balanced')
+        self.assertEqual(self.values()['boost_ms'], 40)
+        self.run_profile('restore')
+        self.assertEqual(self.values(), BASE)
+
+    def test_branded_release_with_wrong_builder_is_rejected(self):
+        self.write('/proc/version', 'Linux version 4.19.157-GolfCore-v0.3 (stock@host)')
+        self.run_profile('apply', 'battery', ok=False)
+        self.assertEqual(self.values(), BASE)
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

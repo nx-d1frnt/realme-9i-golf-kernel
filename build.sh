@@ -9,9 +9,9 @@ BINUTILS=${BINUTILS_BIN:-"$ROOT/toolchains/proton-clang/bin"}
 MODE=${1:-build}
 case "$MODE" in configure|probe|build) ;; *) echo 'Usage: bash build.sh [configure|probe|build]' >&2; exit 2;; esac
 export PATH="$TC:$BINUTILS:$PATH"
-# Keep the stock kernel release for vendor module vermagic. Brand build metadata.
+# The unchanged MODVERSIONS loader accepts the branded release for CRC modules.
 export KBUILD_BUILD_USER=${KBUILD_BUILD_USER:-golfcore}
-export KBUILD_BUILD_HOST=${KBUILD_BUILD_HOST:-balanced-v0.2-rc1}
+export KBUILD_BUILD_HOST=${KBUILD_BUILD_HOST:-balanced-v0.3-rc1}
 for tool in "$TC/clang" "$TC/clang++" aarch64-linux-gnu-as arm-linux-gnueabi-as; do
   command -v "$tool" >/dev/null
 done
@@ -24,7 +24,7 @@ if [[ -f /usr/lib/libcrypto.so.3 ]]; then
   ARGS+=(HOSTLDLIBS_sign-file=-l:libcrypto.so.3 HOSTLDLIBS_extract-cert=-l:libcrypto.so.3)
 fi
 cp "$ROOT/config/stock.config" "$OUT/.config"
-"$SRC/scripts/config" --file "$OUT/.config" --set-str LOCALVERSION '-perf+'
+"$SRC/scripts/config" --file "$OUT/.config" --set-str LOCALVERSION '-GolfCore-v0.3'
 "$SRC/scripts/config" --file "$OUT/.config" --set-str SYSTEM_TRUSTED_KEYS "$ROOT/certs/stock-module-cert.pem"
 make "${ARGS[@]}" olddefconfig > "$ARTIFACTS/configure.log" 2>&1
 cp "$OUT/.config" "$ARTIFACTS/resolved.config"
@@ -55,6 +55,9 @@ cp "$OUT/System.map" "$ARTIFACTS/System.map"
 gzip -t "$ARTIFACTS/Image.gz"
 python3 "$ROOT/tools/check_abi.py" "$ARTIFACTS/Module.symvers" \
   "$ROOT/config/vendor-abi-reference.json" > "$ARTIFACTS/vendor-abi.json"
+python3 "$ROOT/tools/check_vermagic.py" "$SRC/kernel/module.c" "$OUT/kernel/module.o" \
+  "$ROOT/config/vendor-vermagic-reference.json" "$(cat "$OUT/include/config/kernel.release")" \
+  --cc "$TC/clang" > "$ARTIFACTS/vendor-vermagic.json"
 python3 - "$ARTIFACTS" <<'PY'
 import hashlib, json, sys
 from pathlib import Path
