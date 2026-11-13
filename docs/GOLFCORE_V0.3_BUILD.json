@@ -33,11 +33,12 @@
   "lz4": {
     "version": "1.10.0",
     "donor_commit": "9e014b100dfc999ad599337b807af5fffd11f573",
-    "asan_round_trips": 680,
+    "asan_round_trips": 1640,
     "buffer_and_malformed_checks": 13380,
     "workspace_bytes_old": 16416,
     "workspace_bytes_new": 16416,
-    "stack_workspace_eliminated": true
+    "stack_workspace_eliminated": true,
+    "erofs_partial_decoder_cross_tests_included": true
   },
   "previous_regressions": {
     "touch": 32,

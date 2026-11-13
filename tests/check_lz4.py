@@ -55,6 +55,8 @@ int old_LZ4_compress_default(const char*,char*,int,int,void*);
 int new_LZ4_compress_default(const char*,char*,int,int,void*);
 int old_LZ4_decompress_safe(const char*,char*,int,int);
 int new_LZ4_decompress_safe(const char*,char*,int,int);
+int old_LZ4_decompress_safe_partial(const char*,char*,int,int,int);
+int new_LZ4_decompress_safe_partial(const char*,char*,int,int,int);
 int new_LZ4_compress_fast(const char*,char*,int,int,int,void*);
 int new_LZ4_compress_destSize(const char*,char*,int*,int,void*);
 size_t old_worksize(void);
@@ -69,6 +71,7 @@ int main(void) {
     int sizes[]={0,1,4,12,13,15,16,63,64,255,256,4095,4096,4097,16384,65536,131072};
     int (*compressors[])(const char*,char*,int,int,void*)={old_LZ4_compress_default,new_LZ4_compress_default};
     int (*decoders[])(const char*,char*,int,int)={old_LZ4_decompress_safe,new_LZ4_decompress_safe};
+    int (*partial_decoders[])(const char*,char*,int,int,int)={old_LZ4_decompress_safe_partial,new_LZ4_decompress_safe_partial};
     size_t work_sizes[]={old_worksize(),new_worksize()};
     int rounds=0, bounds=0;
     for(unsigned s=0;s<sizeof(sizes)/sizeof(*sizes);s++) for(int pattern=0;pattern<5;pattern++) {
@@ -85,6 +88,16 @@ int main(void) {
                 if(n>0) { assert(decoders[d](encoded,decoded,size,n-1)<0); bounds++; }
                 assert(decoders[d](encoded,decoded,size-1,n)<0); bounds++;
                 free(decoded);
+            }
+            /* EROFS uses partial decoding as well as zram's full decoder. */
+            if(n>0) for(int d=0;d<2;d++) {
+                int targets[]={1,n/2?n/2:1,n};
+                for(int t=0;t<3;t++) {
+                    int target=targets[t]; char *partial=malloc(target);
+                    int result=partial_decoders[d](encoded,partial,size,target,target);
+                    assert(result==target && memcmp(src,partial,target)==0);
+                    free(partial); rounds++;
+                }
             }
             for(int outcap=0;outcap<16;outcap++) {
                 char *small=malloc(outcap?outcap:1); small[0]=0x55;
