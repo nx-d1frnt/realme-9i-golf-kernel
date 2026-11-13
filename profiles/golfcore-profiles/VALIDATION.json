@@ -35,10 +35,12 @@
   "critical_kernel_errors": [],
   "user_feedback": "Smooth scrolling and application switching; no newly noticed problems",
   "service_sh_manual_run_passed": true,
-  "reboot_with_module_tested": false,
+  "reboot_with_module_tested": true,
   "controlled_performance_comparison": false,
   "battery_improvement_measured": false,
   "renamed_kernel_guard_checked_on_host": true,
   "runtime_checks_kernel_release": "4.19.157-perf+",
-  "golfcore_v03_device_tested": false
+  "golfcore_v03_device_tested": true,
+  "autostart_after_real_reboot_passed": true,
+  "baseline_recaptured_for_renamed_kernel": true
 }
