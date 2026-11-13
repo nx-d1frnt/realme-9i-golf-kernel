@@ -1,0 +1,6 @@
+/out/
+/artifacts/
+/release-assets/
+/toolchains/
+__pycache__/
+*.partial

@@ -1,0 +1,127 @@
+--- a/arch/arm64/kernel/vmlinux.lds.S
++++ b/arch/arm64/kernel/vmlinux.lds.S
+@@ -5,6 +5,7 @@
+  * Written by Martin Mares <mj@atrey.karlin.mff.cuni.cz>
+  */
+ 
++#define BSS_FIRST_SECTIONS RTIC_BSS
+ #include <asm-generic/vmlinux.lds.h>
+ #include <asm/cache.h>
+ #include <asm/kernel-pgtable.h>
+@@ -261,9 +262,6 @@
+ 
+ 	HEAD_SYMBOLS
+ 
+-	.bss : {			/* bss segment		*/
+-         RTIC_BSS
+-	}
+ }
+ 
+ /*
+--- a/include/linux/msm_gsi.h
++++ b/include/linux/msm_gsi.h
+@@ -869,7 +869,7 @@
+  * gsi_channel_scratch - channel scratch SW config area
+  *
+  */
+-union __packed gsi_channel_scratch {
++union gsi_channel_scratch {
+ 	struct __packed gsi_gpi_channel_scratch gpi;
+ 	struct __packed gsi_mhi_channel_scratch mhi;
+ 	struct __packed gsi_xdci_channel_scratch xdci;
+@@ -885,7 +885,7 @@
+ 		uint32_t word3;
+ 		uint32_t word4;
+ 	} data;
+-};
++} __packed;
+ 
+ /**
+  * gsi_wdi_channel_scratch3 - WDI protocol SW config area of
+@@ -1275,7 +1275,7 @@
+  * @Return gsi_status
+  */
+ int gsi_write_channel_scratch(unsigned long chan_hdl,
+-		union __packed gsi_channel_scratch val);
++		union gsi_channel_scratch val);
+ 
+ /**
+  * gsi_write_channel_scratch3_reg - Peripheral should call this function to
+@@ -1314,7 +1314,7 @@
+  * @Return gsi_status
+  */
+ int gsi_read_channel_scratch(unsigned long chan_hdl,
+-		union __packed gsi_channel_scratch *val);
++		union gsi_channel_scratch *val);
+ 
+ /**
+  * gsi_pending_irq_type - Peripheral should call this function to
+@@ -1778,7 +1778,7 @@
+ }
+ 
+ static inline int gsi_write_channel_scratch(unsigned long chan_hdl,
+-		union __packed gsi_channel_scratch val)
++		union gsi_channel_scratch val)
+ {
+ 	return -GSI_STATUS_UNSUPPORTED_OP;
+ }
+@@ -1795,7 +1795,7 @@
+ }
+ 
+ static inline int gsi_read_channel_scratch(unsigned long chan_hdl,
+-		union __packed gsi_channel_scratch *val)
++		union gsi_channel_scratch *val)
+ {
+ 	return -GSI_STATUS_UNSUPPORTED_OP;
+ }
+--- a/drivers/platform/msm/gsi/gsi.c
++++ b/drivers/platform/msm/gsi/gsi.c
+@@ -2549,7 +2549,7 @@
+ }
+ 
+ static void __gsi_write_channel_scratch(unsigned long chan_hdl,
+-		union __packed gsi_channel_scratch val)
++		union gsi_channel_scratch val)
+ {
+ 	gsi_writel(val.data.word1, gsi_ctx->base +
+ 		GSI_EE_n_GSI_CH_k_SCRATCH_0_OFFS(chan_hdl,
+@@ -2630,7 +2630,7 @@
+ EXPORT_SYMBOL(gsi_write_channel_scratch2_reg);
+ 
+ static void __gsi_read_channel_scratch(unsigned long chan_hdl,
+-		union __packed gsi_channel_scratch * val)
++		union gsi_channel_scratch * val)
+ {
+ 	val->data.word1 = gsi_readl(gsi_ctx->base +
+ 		GSI_EE_n_GSI_CH_k_SCRATCH_0_OFFS(chan_hdl,
+@@ -2649,10 +2649,10 @@
+ 			gsi_ctx->per.ee));
+ }
+ 
+-static union __packed gsi_channel_scratch __gsi_update_mhi_channel_scratch(
++static union gsi_channel_scratch __gsi_update_mhi_channel_scratch(
+ 	unsigned long chan_hdl, struct __packed gsi_mhi_channel_scratch mscr)
+ {
+-	union __packed gsi_channel_scratch scr;
++	union gsi_channel_scratch scr;
+ 
+ 	/* below sequence is not atomic. assumption is sequencer specific fields
+ 	 * will remain unchanged across this sequence
+@@ -2709,7 +2709,7 @@
+ }
+ 
+ int gsi_write_channel_scratch(unsigned long chan_hdl,
+-		union __packed gsi_channel_scratch val)
++		union gsi_channel_scratch val)
+ {
+ 	struct gsi_chan_ctx *ctx;
+ 
+@@ -2742,7 +2742,7 @@
+ EXPORT_SYMBOL(gsi_write_channel_scratch);
+ 
+ int gsi_read_channel_scratch(unsigned long chan_hdl,
+-		union __packed gsi_channel_scratch *val)
++		union gsi_channel_scratch *val)
+ {
+ 	struct gsi_chan_ctx *ctx;
+ 

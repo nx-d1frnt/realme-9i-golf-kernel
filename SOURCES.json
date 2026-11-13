@@ -1,0 +1,15 @@
+{
+  "kernel": {
+    "repository": "https://github.com/realme-kernel-opensource/realme9-AndroidU-kernel-source",
+    "commit": "47aea2263f9c671c290c3663e42e82c7b20f06f3"
+  },
+  "vendor": {
+    "repository": "https://github.com/realme-kernel-opensource/realme9-AndroidU-vendor-source",
+    "commit": "d3cba492880add3c5493c08a119b09bdbc385180"
+  },
+  "patches": {
+    "01-link-fixes.patch": "1cc6ff8a24af62749221e79765bed7c39ad6629b78fb979870525bd3dbd27110",
+    "02-dst-negative-advice-race.patch": "0b813bc7bf6c8b4e7d1d237f5486a15ca869319e6ed9ef67a543bf1fca4ebfcf",
+    "03-mm-feedback-legacy-abi.patch": "396a8a82e27b2fb11d002f7c9fb0c3b34dbb221b06188ae79936ccdc6e4eab59"
+  }
+}
