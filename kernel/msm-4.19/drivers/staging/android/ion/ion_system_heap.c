@@ -889,13 +889,6 @@ static struct task_struct *ion_create_kworker(struct ion_page_pool **pools,
 	return thread;
 }
 
-#ifdef CONFIG_OPLUS_ION_BOOSTPOOL
-static void init_once(void *foo)
-{
-	;
-}
-#endif
-
 struct ion_heap *ion_system_heap_create(struct ion_platform_heap *data)
 {
 	struct ion_system_heap *heap;
@@ -967,8 +960,10 @@ struct ion_heap *ion_system_heap_create(struct ion_platform_heap *data)
 			if (!heap->uncached_boost_pool)
 				pr_err("%s: create boost_pool ion_uncached failed!\n", __func__);
 
-			boost_ion_info_cachep = kmem_cache_create("boost_ion_info_cachep",
-							sizeof(struct page_info), 0,0, init_once);
+			boost_ion_info_cachep =
+				kmem_cache_create("boost_ion_info_cachep",
+						  sizeof(struct page_info),
+						  0, 0, NULL);
 			if (boost_ion_info_cachep != NULL)
 				create_kmemcache_ion_info_success = true;
 			else

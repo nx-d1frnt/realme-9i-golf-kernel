@@ -4,3 +4,4 @@
 /toolchains/
 __pycache__/
 *.partial
+*.device-state.json

@@ -1,0 +1,35 @@
+{
+  "name": "GolfCore v0.2.0-rc1 Balanced",
+  "device": "Realme 9i 4G / RMX3491",
+  "kernel_version": "Linux version 4.19.157-perf+ (golfcore@balanced-v0.2-rc1) (Android (6443078 based on r383902) clang version 11.0.1 (https://android.googlesource.com/toolchain/llvm-project b397f81060ce6d701042b782172ed13bee898b79), GNU ld (GNU Binutils) 2.36.1) #2 SMP PREEMPT Fri Nov 13 23:41:10 EET 2026",
+  "kernel_sha256": "2e848f8772b5b398f2f9e44457be4fe375ab558b2a3289a9c70ebd1ec3acbfb5",
+  "boot": {
+    "image": "boot-golfcore-v0.2.0-rc1-rmx3491-dfe.img",
+    "bytes": 167772160,
+    "sha256": "392bdb8a70d1d91d6a4c4d4c4b7cd4a11f6e6a11ff6f84dbb4e8d9e1529462e9",
+    "base_boot_sha256": "5ad9b76abc24705b21e33701ffb40545073b646962de22648afe883e13e385ff",
+    "kernel_sha256": "2e848f8772b5b398f2f9e44457be4fe375ab558b2a3289a9c70ebd1ec3acbfb5",
+    "unchanged_components": {
+      "ramdisk.cpio": "229c027197474d3eedd892bc97e44649092d59939cf7a838d6092d3b62d7caa5",
+      "dtb": "202302a72f68f1f986196e73f83ee9de6500492f2ebfe4ff7867c3a725751885",
+      "header": "39fc5b205871f83fd5cd24ebc6e1fbf960f01a41e8a0c7246b88e4dde4155a34"
+    },
+    "all_vendor_import_crcs_match": true,
+    "fbe_disabled": true,
+    "checkpoint_fs_preserved": true,
+    "device_tested": false
+  },
+  "vendor_abi": {
+    "modules": 33,
+    "imports": 2087,
+    "all_imports_match": true
+  },
+  "host_regressions": {
+    "touch_resume_cases": 32,
+    "allocator_flag_cases": 16,
+    "original_source_negative_controls_reproduce_both_bugs": true
+  },
+  "stock_enabled_config_preserved": true,
+  "device_tested": false,
+  "performance_or_battery_gain_measured": false
+}

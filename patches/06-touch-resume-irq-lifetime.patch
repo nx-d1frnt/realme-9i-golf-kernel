@@ -1,0 +1,47 @@
+--- a/vendor/oplus/kernel/touchpanel/oplus_touchscreen/touchpanel_common_driver.c
++++ b/vendor/oplus/kernel/touchpanel/oplus_touchscreen/touchpanel_common_driver.c
+@@ -8584,9 +8584,9 @@
+  * @dev: i2c_client->dev using to get touchpanel_data resource
+  *
+  * resume function bind to LCD on/off status, this fuction start thread to speedup screen on flow.
+- * Do not care the result: Return void type
++ * Return true if the IRQ was freed and will be registered by resume work.
+  */
+-static void tp_resume(struct device *dev)
++static bool tp_resume(struct device *dev)
+ {
+     struct touchpanel_data *ts = dev_get_drvdata(dev);
+ 
+@@ -8639,11 +8639,12 @@
+     }
+ 
+     queue_work(ts->speedup_resume_wq, &ts->speed_up_work);
+-    return;
++    return !ts->irq_trigger_hdl_support;
+ 
+ NO_NEED_RESUME:
+     ts->suspend_state = TP_SPEEDUP_RESUME_COMPLETE;
+     complete(&ts->pm_complete);
++    return false;
+ }
+ 
+ void lcd_trigger_tp_irq_reset(void)
+@@ -8900,6 +8901,7 @@
+ {
+     int *blank;
+     int timed_out = -1;
++    bool irq_freed;
+     struct fb_event *evdata = data;
+     struct touchpanel_data *ts = container_of(self, struct touchpanel_data, fb_notif);
+ 
+@@ -8978,8 +8980,8 @@
+                 if (ts->tp_resume_order == TP_LCD_RESUME) {
+ 
+                 } else if (ts->tp_resume_order == LCD_TP_RESUME) {
+-                    tp_resume(ts->dev);
+-                    if (!ts->irq_trigger_hdl_support) {
++                    irq_freed = tp_resume(ts->dev);
++                    if (!ts->irq_trigger_hdl_support && !irq_freed) {
+                         enable_irq(ts->irq);
+                     }
+                 }

@@ -9,6 +9,9 @@ BINUTILS=${BINUTILS_BIN:-"$ROOT/toolchains/proton-clang/bin"}
 MODE=${1:-build}
 case "$MODE" in configure|probe|build) ;; *) echo 'Usage: bash build.sh [configure|probe|build]' >&2; exit 2;; esac
 export PATH="$TC:$BINUTILS:$PATH"
+# Keep the stock kernel release for vendor module vermagic. Brand build metadata.
+export KBUILD_BUILD_USER=${KBUILD_BUILD_USER:-golfcore}
+export KBUILD_BUILD_HOST=${KBUILD_BUILD_HOST:-balanced-v0.2-rc1}
 for tool in "$TC/clang" "$TC/clang++" aarch64-linux-gnu-as arm-linux-gnueabi-as; do
   command -v "$tool" >/dev/null
 done

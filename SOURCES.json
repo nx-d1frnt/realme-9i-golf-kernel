@@ -10,6 +10,9 @@
   "patches": {
     "01-link-fixes.patch": "1cc6ff8a24af62749221e79765bed7c39ad6629b78fb979870525bd3dbd27110",
     "02-dst-negative-advice-race.patch": "0b813bc7bf6c8b4e7d1d237f5486a15ca869319e6ed9ef67a543bf1fca4ebfcf",
-    "03-mm-feedback-legacy-abi.patch": "396a8a82e27b2fb11d002f7c9fb0c3b34dbb221b06188ae79936ccdc6e4eab59"
+    "03-mm-feedback-legacy-abi.patch": "396a8a82e27b2fb11d002f7c9fb0c3b34dbb221b06188ae79936ccdc6e4eab59",
+    "04-ion-drop-empty-constructor.patch": "7168dff1715e1e7f1590dd5c1a62bdd7ac8a2fcaaa3355fead45bc971e21d87c",
+    "05-zram-validate-allocator-flags.patch": "61f352ed2bbb8b80c8dec4b134268b924339fda384873400714a667fb44ad450",
+    "06-touch-resume-irq-lifetime.patch": "e253ca94d776326c529c25db901147f21068c8532d2720c9d2b1acf96205dcb7"
   }
 }
