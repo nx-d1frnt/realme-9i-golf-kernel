@@ -40,6 +40,13 @@ ln -sfn "$ROOT/vendor/oplus/kernel_4.19/audio" /tmp/op_ak
 rm -rf "$MOD_OUT"
 mkdir -p "$MOD_OUT"
 
+echo "=== Cleaning stale module build artifacts ==="
+find "$ROOT/vendor/qcom/opensource/audio-kernel" \
+     "$ROOT/vendor/oplus/kernel_4.19/audio" \
+     "$ROOT/vendor/qcom/opensource/wlan/qcacld-3.0" \
+     \( -name '*.o' -o -name '*.ko' -o -name '*.mod.c' -o -name '*.cmd' -o -name 'Module.symvers' -o -name 'modules.order' \) \
+     -delete
+
 EXTRA_SYMS=""
 
 build_audio_dir() {

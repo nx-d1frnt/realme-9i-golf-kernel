@@ -1029,7 +1029,7 @@ extern int create_kswapd_threads_proc(struct proc_dir_entry *parent);
 #ifdef CONFIG_VIRTUAL_RESERVE_MEMORY
 int create_reserved_area_enable_proc(struct proc_dir_entry *parent);
 #endif
-#if IS_BUILTIN(CONFIG_OPLUS_ZRAM_OPT)
+#if IS_BUILTIN(CONFIG_OPLUS_ZRAM_OPT) && defined(CONFIG_HYBRIDSWAP_SWAPD)
 extern int create_swappiness_para_proc(void);
 #endif
 static int __init healthinfo_init(void)
@@ -1205,7 +1205,7 @@ static int __init healthinfo_init(void)
 	if (ret)
 		goto ERROR_INIT_VERSION;
 #endif
-#if IS_BUILTIN(CONFIG_OPLUS_ZRAM_OPT)
+#if IS_BUILTIN(CONFIG_OPLUS_ZRAM_OPT) && defined(CONFIG_HYBRIDSWAP_SWAPD)
 	ret = create_swappiness_para_proc();
 	if (ret)
 		goto ERROR_INIT_VERSION;

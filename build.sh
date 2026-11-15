@@ -24,18 +24,29 @@ if [[ -f /usr/lib/libcrypto.so.3 ]]; then
   ARGS+=(HOSTLDLIBS_sign-file=-l:libcrypto.so.3 HOSTLDLIBS_extract-cert=-l:libcrypto.so.3)
 fi
 cp "$ROOT/config/stock.config" "$OUT/.config"
-"$SRC/scripts/config" --file "$OUT/.config" --set-str LOCALVERSION '-GolfCore-v0.5'
+"$SRC/scripts/config" --file "$OUT/.config" --set-str LOCALVERSION '-GolfCore-v0.6'
 "$SRC/scripts/config" --file "$OUT/.config" --set-str SYSTEM_TRUSTED_KEYS "$ROOT/certs/stock-module-cert.pem"
 "$SRC/scripts/config" --file "$OUT/.config" \
   --enable TCP_CONG_ADVANCED \
   --enable TCP_CONG_BBR \
-  --enable DEFAULT_BBR \
-  --set-str DEFAULT_TCP_CONG bbr \
+  --enable TCP_CONG_BBR2 \
+  --disable DEFAULT_BBR \
+  --enable DEFAULT_BBR2 \
+  --set-str DEFAULT_TCP_CONG bbr2 \
   --enable NET_SCH_FQ_CODEL \
+  --enable NET_SCH_CAKE \
   --enable WIREGUARD \
   --enable PROACTIVE_COMPACT \
   --enable LRU_GEN \
-  --enable LRU_GEN_ENABLED
+  --enable LRU_GEN_ENABLED \
+  --enable LRU_GEN_STATS \
+  --enable UCLAMP_TASK \
+  --enable UCLAMP_TASK_GROUP \
+  --disable HZ_250 \
+  --enable HZ_300 \
+  --enable CRYPTO_ZSTD \
+  --enable ZRAM_DEDUP \
+  --disable SECURITY_SMACK
 make "${ARGS[@]}" olddefconfig > "$ARTIFACTS/configure.log" 2>&1
 cp "$OUT/.config" "$ARTIFACTS/resolved.config"
 python3 "$SRC/scripts/diffconfig" "$ROOT/config/stock.config" "$OUT/.config" > "$ARTIFACTS/config-diff.txt"
@@ -50,6 +61,13 @@ allowed = {
     'CONFIG_SYSTEM_TRUSTED_KEYS',
     'CONFIG_TCP_CONG_ADVANCED',
     'CONFIG_DEFAULT_TCP_CONG',
+    'CONFIG_SCHED_TUNE',
+    'CONFIG_HZ_250',
+    'CONFIG_HZ',
+    'CONFIG_HYBRIDSWAP',
+    'CONFIG_HYBRIDSWAP_SWAPD',
+    'CONFIG_HYBRIDSWAP_CORE',
+    'CONFIG_SECURITY_SMACK',
 }
 changed = [key for key, value in stock.items() if key not in allowed and actual.get(key) != value]
 if changed:
