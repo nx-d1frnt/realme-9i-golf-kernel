@@ -19,6 +19,8 @@ mkdir -p "$OUT" "$ARTIFACTS"
 ARGS=(-C "$SRC" "O=$OUT" ARCH=arm64 CC=clang
   CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=aarch64-linux-gnu-
   CROSS_COMPILE_ARM32=arm-linux-gnueabi-
+  LD=ld.lld AR=llvm-ar NM=llvm-nm
+  OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip
   "HOSTCC=$TC/clang" "HOSTCXX=$TC/clang++")
 if [[ -f /usr/lib/libcrypto.so.3 ]]; then
   ARGS+=(HOSTLDLIBS_sign-file=-l:libcrypto.so.3 HOSTLDLIBS_extract-cert=-l:libcrypto.so.3)
@@ -35,6 +37,10 @@ cp "$ROOT/config/stock.config" "$OUT/.config"
   --set-str DEFAULT_TCP_CONG bbr2 \
   --enable NET_SCH_FQ_CODEL \
   --enable NET_SCH_CAKE \
+  --enable NET_SCH_DEFAULT \
+  --disable DEFAULT_PFIFO_FAST \
+  --enable DEFAULT_FQ_CODEL \
+  --set-str DEFAULT_NET_SCH fq_codel \
   --enable WIREGUARD \
   --enable PROACTIVE_COMPACT \
   --enable LRU_GEN \
@@ -47,6 +53,13 @@ cp "$ROOT/config/stock.config" "$OUT/.config"
   --enable CRYPTO_ZSTD \
   --enable ZRAM_DEDUP \
   --disable SECURITY_SMACK \
+  --disable LTO_NONE \
+  --enable LTO_CLANG \
+  --enable THINLTO \
+  --disable CORESIGHT \
+  --disable KPROBES \
+  --disable SLUB_DEBUG \
+  --disable FTRACE \
   --enable KSU \
   --disable KSU_SYSCALL_TABLE_HOOK \
   --disable KSU_KPROBES_HOOK \
@@ -72,6 +85,36 @@ allowed = {
     'CONFIG_HYBRIDSWAP_SWAPD',
     'CONFIG_HYBRIDSWAP_CORE',
     'CONFIG_SECURITY_SMACK',
+    'CONFIG_LTO_NONE',
+    'CONFIG_HAVE_ARCH_PREL32_RELOCATIONS',
+    'CONFIG_CORESIGHT',
+    'CONFIG_CORESIGHT_LINKS_AND_SINKS',
+    'CONFIG_CORESIGHT_LINK_AND_SINK_TMC',
+    'CONFIG_CORESIGHT_DYNAMIC_REPLICATOR',
+    'CONFIG_CORESIGHT_STM',
+    'CONFIG_CORESIGHT_CTI',
+    'CONFIG_CORESIGHT_CTI_SAVE_DISABLE',
+    'CONFIG_CORESIGHT_OST',
+    'CONFIG_CORESIGHT_TPDA',
+    'CONFIG_CORESIGHT_TPDM',
+    'CONFIG_CORESIGHT_CSR',
+    'CONFIG_CORESIGHT_HWEVENT',
+    'CONFIG_CORESIGHT_DUMMY',
+    'CONFIG_CORESIGHT_REMOTE_ETM',
+    'CONFIG_CORESIGHT_REMOTE_ETM_DEFAULT_ENABLE',
+    'CONFIG_CORESIGHT_TGU',
+    'CONFIG_KPROBES',
+    'CONFIG_KRETPROBES',
+    'CONFIG_UPROBES',
+    'CONFIG_KPROBE_EVENTS',
+    'CONFIG_UPROBE_EVENTS',
+    'CONFIG_BPF_EVENTS',
+    'CONFIG_PROBE_EVENTS',
+    'CONFIG_SLUB_DEBUG',
+    'CONFIG_KMALLOC_DEBUG',
+    'CONFIG_FTRACE',
+    'CONFIG_BRANCH_PROFILE_NONE',
+    'CONFIG_TRACING_EVENTS_GPIO',
 }
 changed = [key for key, value in stock.items() if key not in allowed and actual.get(key) != value]
 if changed:
