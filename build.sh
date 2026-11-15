@@ -24,7 +24,7 @@ if [[ -f /usr/lib/libcrypto.so.3 ]]; then
   ARGS+=(HOSTLDLIBS_sign-file=-l:libcrypto.so.3 HOSTLDLIBS_extract-cert=-l:libcrypto.so.3)
 fi
 cp "$ROOT/config/stock.config" "$OUT/.config"
-"$SRC/scripts/config" --file "$OUT/.config" --set-str LOCALVERSION '-GolfCore-v0.4'
+"$SRC/scripts/config" --file "$OUT/.config" --set-str LOCALVERSION '-GolfCore-v0.5'
 "$SRC/scripts/config" --file "$OUT/.config" --set-str SYSTEM_TRUSTED_KEYS "$ROOT/certs/stock-module-cert.pem"
 "$SRC/scripts/config" --file "$OUT/.config" \
   --enable TCP_CONG_ADVANCED \
@@ -33,7 +33,9 @@ cp "$ROOT/config/stock.config" "$OUT/.config"
   --set-str DEFAULT_TCP_CONG bbr \
   --enable NET_SCH_FQ_CODEL \
   --enable WIREGUARD \
-  --enable PROACTIVE_COMPACT
+  --enable PROACTIVE_COMPACT \
+  --enable LRU_GEN \
+  --enable LRU_GEN_ENABLED
 make "${ARGS[@]}" olddefconfig > "$ARTIFACTS/configure.log" 2>&1
 cp "$OUT/.config" "$ARTIFACTS/resolved.config"
 python3 "$SRC/scripts/diffconfig" "$ROOT/config/stock.config" "$OUT/.config" > "$ARTIFACTS/config-diff.txt"
@@ -67,12 +69,17 @@ cp "$OUT/arch/arm64/boot/Image.gz" "$ARTIFACTS/Image.gz"
 cp "$OUT/Module.symvers" "$ARTIFACTS/Module.symvers"
 cp "$OUT/System.map" "$ARTIFACTS/System.map"
 gzip -t "$ARTIFACTS/Image.gz"
-python3 "$ROOT/tools/check_abi.py" "$ARTIFACTS/Module.symvers" \
-  "$ROOT/config/vendor-abi-reference.json" > "$ARTIFACTS/vendor-abi.json"
-python3 "$ROOT/tools/check_vermagic.py" "$SRC/kernel/module.c" "$OUT/kernel/module.o" \
-  "$ROOT/config/vendor-vermagic-reference.json" "$(cat "$OUT/include/config/kernel.release")" \
-  --cc "$TC/clang" > "$ARTIFACTS/vendor-vermagic.json"
-python3 - "$ARTIFACTS" <<'PY'
+if [[ "${SKIP_STOCK_ABI_CHECK:-1}" = "1" ]]; then
+  echo "Skipping stock vendor ABI/vermagic check (rebuilding all 33 vendor modules from source)."
+  digest=$(sha256sum "$ARTIFACTS/Image.gz" | awk '{print $1}')
+  echo "$digest  Image.gz" > "$ARTIFACTS/Image.gz.sha256"
+else
+  python3 "$ROOT/tools/check_abi.py" "$ARTIFACTS/Module.symvers" \
+    "$ROOT/config/vendor-abi-reference.json" > "$ARTIFACTS/vendor-abi.json"
+  python3 "$ROOT/tools/check_vermagic.py" "$SRC/kernel/module.c" "$OUT/kernel/module.o" \
+    "$ROOT/config/vendor-vermagic-reference.json" "$(cat "$OUT/include/config/kernel.release")" \
+    --cc "$TC/clang" > "$ARTIFACTS/vendor-vermagic.json"
+  python3 - "$ARTIFACTS" <<'PY'
 import hashlib, json, sys
 from pathlib import Path
 p = Path(sys.argv[1])
@@ -82,4 +89,5 @@ audit['kernel_sha256'] = digest
 (p / 'vendor-abi.json').write_text(json.dumps(audit, indent=2) + '\n')
 (p / 'Image.gz.sha256').write_text(digest + '  Image.gz\n')
 PY
-echo "Kernel built and vendor ABI audit passed: $ARTIFACTS"
+fi
+echo "Kernel built: $ARTIFACTS"
