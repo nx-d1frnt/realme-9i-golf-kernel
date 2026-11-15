@@ -46,7 +46,11 @@ cp "$ROOT/config/stock.config" "$OUT/.config"
   --enable HZ_300 \
   --enable CRYPTO_ZSTD \
   --enable ZRAM_DEDUP \
-  --disable SECURITY_SMACK
+  --disable SECURITY_SMACK \
+  --enable KSU \
+  --disable KSU_SYSCALL_TABLE_HOOK \
+  --disable KSU_KPROBES_HOOK \
+  --enable KSU_MANUAL_HOOK
 make "${ARGS[@]}" olddefconfig > "$ARTIFACTS/configure.log" 2>&1
 cp "$OUT/.config" "$ARTIFACTS/resolved.config"
 python3 "$SRC/scripts/diffconfig" "$ROOT/config/stock.config" "$OUT/.config" > "$ARTIFACTS/config-diff.txt"
