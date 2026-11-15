@@ -11,7 +11,7 @@ case "$MODE" in configure|probe|build) ;; *) echo 'Usage: bash build.sh [configu
 export PATH="$TC:$BINUTILS:$PATH"
 # The unchanged MODVERSIONS loader accepts the branded release for CRC modules.
 export KBUILD_BUILD_USER=${KBUILD_BUILD_USER:-golfcore}
-export KBUILD_BUILD_HOST=${KBUILD_BUILD_HOST:-balanced-v0.3-rc1}
+export KBUILD_BUILD_HOST=${KBUILD_BUILD_HOST:-balanced-v0.4-rc1}
 for tool in "$TC/clang" "$TC/clang++" aarch64-linux-gnu-as arm-linux-gnueabi-as; do
   command -v "$tool" >/dev/null
 done
@@ -24,8 +24,16 @@ if [[ -f /usr/lib/libcrypto.so.3 ]]; then
   ARGS+=(HOSTLDLIBS_sign-file=-l:libcrypto.so.3 HOSTLDLIBS_extract-cert=-l:libcrypto.so.3)
 fi
 cp "$ROOT/config/stock.config" "$OUT/.config"
-"$SRC/scripts/config" --file "$OUT/.config" --set-str LOCALVERSION '-GolfCore-v0.3'
+"$SRC/scripts/config" --file "$OUT/.config" --set-str LOCALVERSION '-GolfCore-v0.4'
 "$SRC/scripts/config" --file "$OUT/.config" --set-str SYSTEM_TRUSTED_KEYS "$ROOT/certs/stock-module-cert.pem"
+"$SRC/scripts/config" --file "$OUT/.config" \
+  --enable TCP_CONG_ADVANCED \
+  --enable TCP_CONG_BBR \
+  --enable DEFAULT_BBR \
+  --set-str DEFAULT_TCP_CONG bbr \
+  --enable NET_SCH_FQ_CODEL \
+  --enable WIREGUARD \
+  --enable PROACTIVE_COMPACT
 make "${ARGS[@]}" olddefconfig > "$ARTIFACTS/configure.log" 2>&1
 cp "$OUT/.config" "$ARTIFACTS/resolved.config"
 python3 "$SRC/scripts/diffconfig" "$ROOT/config/stock.config" "$OUT/.config" > "$ARTIFACTS/config-diff.txt"
@@ -34,7 +42,13 @@ import sys
 def settings(path):
     return dict(line.strip().split('=', 1) for line in open(path) if line.startswith('CONFIG_'))
 stock, actual = map(settings, sys.argv[1:])
-allowed = {'CONFIG_CLANG_VERSION', 'CONFIG_LOCALVERSION', 'CONFIG_SYSTEM_TRUSTED_KEYS'}
+allowed = {
+    'CONFIG_CLANG_VERSION',
+    'CONFIG_LOCALVERSION',
+    'CONFIG_SYSTEM_TRUSTED_KEYS',
+    'CONFIG_TCP_CONG_ADVANCED',
+    'CONFIG_DEFAULT_TCP_CONG',
+}
 changed = [key for key, value in stock.items() if key not in allowed and actual.get(key) != value]
 if changed:
     raise SystemExit('Stock settings changed: ' + ', '.join(changed))

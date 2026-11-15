@@ -1712,10 +1712,12 @@ static int pn544_probe(struct i2c_client *client,
         pr_err("%s : not able to set ven_gpio as output\n", __func__);
         goto err_firm;
     }
-    ret = gpio_direction_output(pn544_dev->ese_pwr_gpio, 0);
-    if (ret < 0) {
-        pr_err("%s : not able to set ese_pwr gpio as output\n", __func__);
-        goto err_ese_pwr;
+    if (gpio_is_valid(pn544_dev->ese_pwr_gpio)) {
+        ret = gpio_direction_output(pn544_dev->ese_pwr_gpio, 0);
+        if (ret < 0) {
+            pr_err("%s : not able to set ese_pwr gpio as output\n", __func__);
+            goto err_ese_pwr;
+        }
     }
     if (platform_data->firm_gpio) {
         ret = gpio_direction_output(pn544_dev->firm_gpio, 0);
@@ -1830,7 +1832,8 @@ static int pn544_probe(struct i2c_client *client,
     if (pn544_dev->firm_gpio)
         gpio_free(platform_data->firm_gpio);
     err_firm:
-    gpio_free(platform_data->ese_pwr_gpio);
+    if (gpio_is_valid(platform_data->ese_pwr_gpio))
+        gpio_free(platform_data->ese_pwr_gpio);
     err_ese_pwr:
     gpio_free(platform_data->ven_gpio);
     err_ven:
@@ -1859,7 +1862,8 @@ static int pn544_remove(struct i2c_client *client)
     //#endif /* VENDOR_EDIT */
     gpio_free(pn544_dev->irq_gpio);
     gpio_free(pn544_dev->ven_gpio);
-    gpio_free(pn544_dev->ese_pwr_gpio);
+    if (gpio_is_valid(pn544_dev->ese_pwr_gpio))
+        gpio_free(pn544_dev->ese_pwr_gpio);
     destroy_workqueue(pn544_dev->pSecureTimerCbWq);
 #ifdef ISO_RST
     gpio_free(pn544_dev->iso_rst_gpio);
