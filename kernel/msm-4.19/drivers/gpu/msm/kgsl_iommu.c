@@ -2675,7 +2675,7 @@ static int _kgsl_iommu_cb_probe(struct kgsl_device *device,
 		 * correct suspend order between smmu device and gpu device.
 		 */
 		if (!device_link_add(&device->pdev->dev, ctx->dev,
-				DL_FLAG_AUTOREMOVE_CONSUMER))
+				DL_FLAG_STATELESS))
 			dev_err(ctx->dev,
 				"Unable to create device link to gpu device\n");
 	}
