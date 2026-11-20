@@ -14,6 +14,7 @@ vendor/**/*.ko.cmd
 vendor/**/*.mod.c
 vendor/**/*.mod.o
 vendor/**/*.mod.o.cmd
+vendor/**/*.o.symversions
 vendor/**/.tmp_versions/
 vendor/**/Module.symvers
 vendor/**/modules.order

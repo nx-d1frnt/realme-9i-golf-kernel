@@ -1,144 +1,138 @@
-# GolfCore — Realme 9i 4G / RMX3491
+# GolfCore — Realme 9i 4G (`RMX3491` / `khaje` / `bengal`)
 
-Текущая рабочая интеграция: **GolfCore v0.6 + SUSFS 1.5.5 NON-GKI** с
-KernelSU-Next и ручными хуками. Сборка сохраняет новые артефакты в
-`artifacts/susfs/`. Настройка, совместимость и статус проверки:
-[docs/SUSFS.md](docs/SUSFS.md).
+Custom Linux `4.19.157-GolfCore-v0.6-susfs` kernel for **Realme 9i 4G (Snapdragon 680 / SM6225)** with **KernelSU-Next**, **SUSFS 1.5.5 NON-GKI**, **Clang ThinLTO**, **TCP BBRv2**, **MGLRU**, and reproducible vendor module rebuilding.
 
-Экспериментальное ядро **4.19.157-GolfCore-v0.3 для Realme 9i 4G / RMX3491**.
-Кандидат **GolfCore v0.3.0-rc1 Balanced** добавляет явное имя релиза и
-LZ4 1.10.0 из зафиксированных исходников Neutrino для Redmi Note 11.
-База v0.2 с исправлениями ION, zram и touch IRQ проверена на crDroid GSI
-Android 14 и существующей DFE-базе. Кандидат v0.3 установлен и прошёл
-первичную проверку; пользователь подтвердил основные функции и видимость имени.
-Цель — совместимость с GSI и баланс плавности и автономности.
-Изменения и результаты проверок: [docs/GOLFCORE_V0.3.md](docs/GOLFCORE_V0.3.md).
+Prebuilt images (`AnyKernel3.zip`, DFE `boot.img`, EROFS `vendor.img`, `ksu_susfs_arm64`) are published in **Releases**. Personal backups, device logs, toolchains, and signing keys are excluded from Git.
 
-Дополнительно доступен модуль [GolfCore Profiles](profiles/golfcore-profiles/README.md):
-CPU Balanced/Battery/Gaming, пробная настройка памяти, возврат исходных значений.
-Исходники, ZIP для Magisk и результаты проверки находятся в его каталоге.
+> [!WARNING]
+> The prebuilt `vendor` images in Releases (`vendor_golfcore_v06*.img` and inside `AnyKernel3.zip`) are derived from stock **Realme UI 4.0** vendor with custom modifications and GSI overlays. **Flash at your own risk** and back up your working `boot` and `vendor` partitions beforehand.
 
-## Что находится в репозитории
+## Key Features (`v0.6-susfs`)
 
-- `kernel/msm-4.19/`, `vendor/`: полный снимок использованных исходников;
-- `patches/`: применённые изменения;
-- `config/stock.config`: конфиг работающего штатного ядра;
-- `config/vendor-abi-reference.json`: CRC импортов/экспортов и SHA-256
-  33 штатных vendor-модулей, без самих бинарных модулей;
-- `config/vendor-vermagic-reference.json`: vermagic и наличие CRC-секций тех же модулей;
-- `certs/`: публичный сертификат, которым подписаны штатные модули;
-- `build.sh`, `tools/`: сборка, проверка ABI и упаковка boot;
-- `docs/TESTED.md`: результат проверки и известные ограничения.
-- `tests/check_regressions.py`: проверки порядка touch resume и флагов выделения памяти;
-- `tools/capture_state.py`: чтение показателей телефона для сравнения сборок.
+- **Root & Hiding:**
+  - **KernelSU-Next** (`legacy`, `CONFIG_KSU_MANUAL_HOOK=y`, UAPI v6 — requires KernelSU-Next Manager with UAPI v6 support such as `v3.4.2-198+`).
+  - **SUSFS 1.5.5 NON-GKI** (`CONFIG_KSU_SUSFS=y`, 13 features enabled: `SUS_PATH`, `SUS_MOUNT`, `AUTO_ADD_SUS_KSU_DEFAULT_MOUNT`, `AUTO_ADD_SUS_BIND_MOUNT`, `SUS_KSTAT`, `TRY_UMOUNT`, `AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT`, `SPOOF_UNAME`, `ENABLE_LOG`, `HIDE_KSU_SUSFS_SYMBOLS`, `SPOOF_CMDLINE_OR_BOOTCONFIG`, `OPEN_REDIRECT`, `HAS_MAGIC_MOUNT`).
+- **Compiler & CPU Tuning:**
+  - **Clang ThinLTO** (`CONFIG_LTO_CLANG=y`, `CONFIG_THINLTO=y`, `CONFIG_LD_IS_LLD=y`, `CONFIG_RELR=y`).
+  - Snapdragon 680 instruction scheduling tuning (`-mtune=cortex-a73` in [arch/arm64/Makefile](kernel/msm-4.19/arch/arm64/Makefile)).
+  - `CONFIG_JUMP_LABEL=y` (`static_branch` instruction patching).
+- **Power, Scheduler & Overhead Reduction:**
+  - `CONFIG_WQ_POWER_EFFICIENT_DEFAULT=y`, `CONFIG_UCLAMP_TASK=y`, `CONFIG_UCLAMP_TASK_GROUP=y`, `CONFIG_HZ_300=y`.
+  - Disabled `CORESIGHT`, `KPROBES`, `SLUB_DEBUG`, `FTRACE`, and `SCHEDSTATS` (keeping `SCHED_DEBUG=y`).
+- **Memory & ZRAM:**
+  - **MGLRU** (`CONFIG_LRU_GEN=y`, `CONFIG_LRU_GEN_ENABLED=y`, `CONFIG_LRU_GEN_STATS=y`), `CONFIG_PROACTIVE_COMPACT=y`, `CONFIG_CRYPTO_ZSTD=y`, `CONFIG_ZRAM_DEDUP=y`.
+- **Networking:**
+  - Backported **TCP BBRv2** (`CONFIG_DEFAULT_BBR2=y`), default qdisc **`fq_codel`** (`CONFIG_DEFAULT_FQ_CODEL=y`), **`CAKE`** (`CONFIG_NET_SCH_CAKE=y`), **`WireGuard`** (`CONFIG_WIREGUARD=y`), and inlined `sk_security_struct` (`CONFIG_SECURITY_SMACK=n`).
+- **Vendor Modules:**
+  - All 33 vendor `.ko` modules (Wi-Fi `qca_cld3_wlan.ko`, audio, `rdbg.ko`) rebuilt from source, stripped, and signed with the kernel build's local key (`CONFIG_MODULE_SIG_FORCE=y`).
 
-Готовые `Image.gz`, DFE boot и контрольные суммы находятся в **Releases**.
-Резервные образы исходных boot/vendor, личные логи телефона и приватные ключи подписи
-в репозиторий не включены.
+## Repository Layout
 
-## Основа
+- [kernel/msm-4.19/](kernel/msm-4.19/): Full kernel source tree (`KernelSU-Next`, `SUSFS 1.5.5`, BBRv2, MGLRU, ION/LZ4/touch fixes).
+- [vendor/](vendor/): Full vendor module sources (`audio-kernel`, `wlan/qcacld-3.0`, `oplus/kernel_4.19/audio`, etc.).
+- [build.sh](build.sh): Configures (`stock.config` + feature toggles), validates config constraints, and builds `Image.gz` + in-tree modules.
+- [build_vendor_modules.sh](build_vendor_modules.sh): Two-pass cross-module CRC build, strip, and PKCS#7 signing for all 33 vendor `.ko` modules.
+- [config/](config/): `stock.config`, reference ABI/vermagic JSONs, and offline EROFS metadata table [vendor_meta.txt](config/vendor_meta.txt).
+- [certs/](certs/): Public stock module certificate (`stock-module-cert.pem` / `.der`).
+- [anykernel/anykernel.sh](anykernel/anykernel.sh): Portable `AnyKernel3` installer script (kernel + optional EROFS `vendor.img` flashing).
+- [tools/](tools/): Boot/vendor/AnyKernel3 packaging helpers ([package_boot.py](tools/package_boot.py), [extract_vendor_meta.py](tools/extract_vendor_meta.py), [repack_vendor_erofs.py](tools/repack_vendor_erofs.py), [package_anykernel3.py](tools/package_anykernel3.py)) and `ksu_susfs` JNI sources in [tools/susfs/jni/](tools/susfs/jni/).
+- [docs/](docs/): Release notes and test reports ([SUSFS.md](docs/SUSFS.md), [GOLFCORE_V0.6.md](docs/GOLFCORE_V0.6.md), [GOLFCORE_V0.5.md](docs/GOLFCORE_V0.5.md), [TESTED.md](docs/TESTED.md)).
+- [patches/](patches/) & [SOURCES.json](SOURCES.json): Upstream origin metadata and patch provenance.
 
-Использована цельная публикация Realme SM6225 2024 года для RMX3521:
+## Prerequisites & Toolchains
 
-- [kernel](https://github.com/realme-kernel-opensource/realme9-AndroidU-kernel-source),
-  commit `47aea2263f9c671c290c3663e42e82c7b20f06f3`;
-- [vendor](https://github.com/realme-kernel-opensource/realme9-AndroidU-vendor-source),
-  commit `d3cba492880add3c5493c08a119b09bdbc385180`.
+Tested on **Linux x86-64**:
 
-Фактически проверенное устройство — **RMX3491**. Его рабочий ramdisk и DTB
-сохранены в опубликованном тестовом boot. Происхождение и хеши патчей:
-`SOURCES.json`. Патчи уже применены к исходникам в этом репозитории.
+- **Host tools:** `make`, `python3` (3.11+), `bison`, `flex`, `bc`, `perl`, `gzip`, `xz`, `cpio`, OpenSSL dev headers (`libssl-dev`), and `erofs-utils` (`dump.erofs`, `fsck.erofs`, `mkfs.erofs`).
+- **Compiler & Binutils:**
+  - Android **Clang 11.0.1 (`clang-r383902`, build 6443078)** including `ld.lld`, `llvm-ar`, `llvm-nm`, `llvm-objcopy`, `llvm-objdump`, `llvm-strip`.
+  - GNU binutils providing `aarch64-linux-gnu-as` and `arm-linux-gnueabi-as` (e.g., from `proton-clang` or AOSP prebuilt `gcc-linux-x86`).
+- Place toolchains under `toolchains/clang-r383902/bin` and `toolchains/proton-clang/bin`, **or** pass `CLANG_BIN` and `BINUTILS_BIN` explicitly.
 
-Основные изменения:
+## Building From Source
 
-1. Исправлено размещение `.bss.rtic` и обработка packed-типа GSI в genksyms.
-2. Перенесён полный stable 4.19 патч
-   [net: fix __dst_negative_advice() race](https://github.com/gregkh/linux/commit/051c0bde9f0450a2ec3d62a86d2a0d2fad117f13),
-   включая callbacks IPv4/IPv6/XFRM. Этот интерфейс совпадает со штатным
-   ядром, что подтверждено встроенным архивом IKHEADERS и CRC модулей.
-3. Восстановлен пятиаргументный экспорт multimedia feedback для штатного
-   аудио-vendor; новый внутренний API сохранён под именем `_v2`.
-4. Удалён пустой конструктор ION cache: обнуление через zalloc сохранено.
-5. Исключение HIGH_ATOMIC_ZRAM включено внутрь WARN_ON_ONCE; поведение
-   флагов выделения памяти сохранено.
-6. При LCD-before-touch resume IRQ, освобождённый в tp_resume, больше
-   не включается до повторной регистрации в resume work. Если resume
-   пропущен, ранее отключённый IRQ включается как прежде.
-7. LZ4 1.10.0 из Neutrino: сохранён интерфейс рабочей памяти вызывающего
-   кода и исключены два локальных буфера по 16 KiB на стеке.
+```bash
+git clone -b golfcore-v0.4 https://github.com/nx-d1frnt/realme-9i-golf-kernel.git
+cd realme-9i-golf-kernel
+```
 
-MODVERSIONS и проверка подписей модулей включены. CRC не подменяются.
-
-## Сборка
-
-Linux x86-64. Проверенный компилятор — Android Clang **11.0.1 / r383902**
-(build 6443078), GNU binutils **2.36.1** с aarch64 и arm32 assemblers.
-Также нужны make, Python 3.11+, bison, flex, bc, OpenSSL development headers,
-perl, gzip, xz, cpio. Для старых host-утилит при наличии OpenSSL 4 скрипт
-выбирает установленную `libcrypto.so.3`.
-
-Положите toolchains в `toolchains/clang-r383902/bin` и
-`toolchains/proton-clang/bin` либо задайте пути явно:
+### 1. Build the Kernel (`Image.gz` + in-tree modules)
 
 ```bash
 CLANG_BIN=/path/to/clang-r383902/bin \
 BINUTILS_BIN=/path/to/binutils/bin \
-JOBS=6 bash build.sh
+JOBS="$(nproc)" \
+bash build.sh build
 ```
 
-Доступны режимы `configure`, `probe`, `build` (по умолчанию). Можно задать
-`OUT_DIR` и `ARTIFACTS_DIR`. Включённые параметры штатного конфига проверяются
-после olddefconfig. Новый релиз — `4.19.157-GolfCore-v0.3`, метаданные сборки —
-`golfcore@balanced-v0.3-rc1`. При MODVERSIONS неизменённый загрузчик не
-сравнивает имя релиза у модулей с CRC. Проверки оставшейся части vermagic,
-CRC и подписей сохраняются; принудительная загрузка выключена.
+Outputs are written to `artifacts/susfs/` (`Image.gz`, `Module.symvers`, `System.map`, `resolved.config`, `config-diff.txt`), and a local module signing keypair is generated in `out/certs/`.
 
-Сборка завершится успешно только после проверки всех **2087 импортов
-33 модулей**, включая зависимости модулей друг от друга, и 33 проверок
-vermagic с отрицательными контролями. Результаты — `artifacts/Image.gz`,
-`Module.symvers`, `vendor-abi.json`, `vendor-vermagic.json`, `config-diff.txt`.
-Частный ключ модульной подписи создаётся локально в out, в Git его нет.
-Процедура воспроизводима по исходникам и конфигу; timestamp и новый ключ
-означают, что байтовая идентичность релизному образу не обещается.
+### 2. Build All 33 Vendor Modules
 
-## Boot и отключённый FBE
-
-Релизный boot создан из рабочего патченного boot этого RMX3491.
-Повторная распаковка подтвердила точное сохранение ramdisk, DTB, header,
-fstab, отключённого FBE и `checkpoint=fs`. Это образ для указанной рабочей
-базы, а не универсальный boot для любых прошивок.
-
-Для упаковки новой сборки используйте собственную проверенную рабочую копию
-DFE boot и официальный MagiskBoot:
+Because **ThinLTO**, **SUSFS**, `JUMP_LABEL`, and `SCHEDSTATS=n` change kernel symbol CRCs and `task_struct` layout, you **must** rebuild all vendor `.ko` modules against the exact `out/` tree from Step 1:
 
 ```bash
-python3 tools/package_boot.py \
-  --base-boot /path/to/current-working-dfe-boot.img \
-  --magiskboot /path/to/magiskboot
+CLANG_BIN=/path/to/clang-r383902/bin \
+BINUTILS_BIN=/path/to/binutils/bin \
+bash build_vendor_modules.sh
 ```
 
-Скрипт проверяет ABI, соответствие Image.gz отчёту, сохраняет компоненты
-рабочего boot и повторно распаковывает результат для проверки. Никаких
-команд прошивки или взаимодействия с телефоном он не выполняет.
+Rebuilt, stripped, and signed modules are placed in `out_modules/`.
 
-## Состояние
+### 3. Repack Your `boot.img`
 
-Кандидат v0.3 установлен: 31 runtime-модуль загружен, DFE и root сохранены,
-профили применились после реальной перезагрузки. В журнале нет обнаруженных
-ошибок LZ4/EROFS, kernel panic или Oops. При загрузке счётчик zram
-failed_writes достиг 50 и затем оставался стабильным; причина не доказана.
-Подробности: [отчёт v0.3](docs/GOLFCORE_V0.3_DEVICE_TEST.md).
-Ниже описано состояние проверенной базы v0.2.
+Extract your device's working (stock or DFE) `boot.img` using `magiskboot`, replace `kernel` with `artifacts/susfs/Image.gz`, and repack:
 
-На v0.1.0-abi-v2 проверены первичная загрузка и основные функции.
-GolfCore v0.2.0-rc1 содержит исправления трёх найденных предупреждений;
-версия установлена на RMX3491, загрузка и короткая проверка экрана прошли.
-Пользователь подтвердил работу сенсора, пробуждения, Wi-Fi, звука/микрофона,
-камеры и отпечатка. За первичную проверку предупреждения ION, zram и touch IRQ
-не повторились. Сохраняются предупреждения NFC GPIO и device links из базы.
-Подробности: [отчёт проверки устройства](docs/GOLFCORE_V0.2_DEVICE_TEST.md).
-Длительная стабильность, глубокий сон и расход батареи пока не проверены.
+```bash
+mkdir -p /tmp/boot_work && cd /tmp/boot_work
+magiskboot unpack /path/to/working-boot.img
+cp /path/to/realme-9i-golf-kernel/artifacts/susfs/Image.gz kernel
+magiskboot repack /path/to/working-boot.img /path/to/boot-golfcore-susfs.img
+```
 
-Лицензии и уведомления исходных kernel/vendor-компонентов сохранены в их
-каталогах. Основная лицензия Linux kernel — GPL-2.0-only с указанными
-в исходниках исключениями.
+### 4. Repack Your EROFS `vendor.img`
+
+Extract exact `uid`/`gid`/`mode`/`security.selinux` metadata from your base `vendor.img` (no root or ADB required), inject the 33 rebuilt `.ko` modules from `out_modules/`, and verify with `fsck.erofs`:
+
+```bash
+python3 tools/extract_vendor_meta.py \
+  --vendor-img /path/to/base-vendor.img \
+  --output /tmp/vendor_meta.txt
+
+python3 tools/repack_vendor_erofs.py \
+  --base-vendor /path/to/base-vendor.img \
+  --meta /tmp/vendor_meta.txt \
+  --modules-dir out_modules \
+  --output /path/to/vendor-golfcore-susfs.img
+```
+
+*(For stock Realme UI 4.0 vendor, `config/vendor_meta.txt` is also included directly in this repository.)*
+
+### 5. Optional: Package an Autonomous `AnyKernel3.zip`
+
+Clone upstream `osm0sis/AnyKernel3` and bundle `Image.gz`, [anykernel/anykernel.sh](anykernel/anykernel.sh), and optionally your repacked `vendor.img`:
+
+```bash
+git clone --depth=1 https://github.com/osm0sis/AnyKernel3.git /tmp/AnyKernel3
+
+python3 tools/package_anykernel3.py \
+  --anykernel-dir /tmp/AnyKernel3 \
+  --kernel artifacts/susfs/Image.gz \
+  --vendor /path/to/vendor-golfcore-susfs.img \
+  --output artifacts/susfs/GolfCore-v0.6-SUSFS-RMX3491-AnyKernel3.zip
+```
+
+Omit `--vendor` to produce a kernel-only zip if your device already runs a matching `vendor_golfcore` image.
+
+### 6. Optional: Build `ksu_susfs` Userspace CLI
+
+Source for the matching SUSFS `v1.5.5` NON-GKI `prctl` helper is located in [tools/susfs/jni/](tools/susfs/jni/) and can be built with Android NDK:
+
+```bash
+ndk-build NDK_PROJECT_PATH=tools/susfs
+```
+
+## Base Upstream Sources & License
+
+- Base kernel & vendor sources: Realme SM6225 Android U open-source drop ([kernel](https://github.com/realme-kernel-opensource/realme9-AndroidU-kernel-source), [vendor](https://github.com/realme-kernel-opensource/realme9-AndroidU-vendor-source)) — full provenance in [SOURCES.json](SOURCES.json).
+- Licensed under the Linux kernel license (`GPL-2.0-only` with component-specific notices preserved in source directories) and `tools/susfs/LICENSE`.

@@ -1,8 +1,0 @@
-__crc_apr_tal_write = 0xdf067691;
-__crc_apr_tal_rx_intents_config = 0x13eafb4e;
-__crc_apr_tal_start_rx_rt = 0xabaa2aec;
-__crc_apr_tal_end_rx_rt = 0x115bca7c;
-__crc_apr_tal_open = 0xa7f50d07;
-__crc_apr_tal_close = 0x15016a8a;
-__crc_apr_tal_init = 0x721f0057;
-__crc_apr_tal_exit = 0x8b1c51f5;

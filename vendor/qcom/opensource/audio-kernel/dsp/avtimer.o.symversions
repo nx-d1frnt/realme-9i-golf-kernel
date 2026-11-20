@@ -1,4 +1,0 @@
-__crc_avcs_core_open = 0x43a596b2;
-__crc_avcs_core_disable_power_collapse = 0xd4a00696;
-__crc_avcs_core_query_timer = 0x21ed32d6;
-__crc_avcs_core_query_timer_offset = 0xc6660f4e;

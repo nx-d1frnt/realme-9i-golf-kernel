@@ -1,5 +1,0 @@
-__crc_rouleur_soc_get_mbhc = 0xc92e1613;
-__crc_rouleur_get_micb_vout_ctl_val = 0xa5b77540;
-__crc_rouleur_mbhc_micb_adjust_voltage = 0x026c0574;
-__crc_rouleur_micbias_control = 0x4afa49f9;
-__crc_rouleur_info_create_codec_entry = 0x6d00ef59;

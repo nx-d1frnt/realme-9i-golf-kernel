@@ -1,8 +1,0 @@
-__crc_wsa881x_get_client_index = 0xb2e51971;
-__crc_wsa881x_get_probing_count = 0xc6db3be0;
-__crc_wsa881x_get_presence_count = 0x2eadd40d;
-__crc_wsa881x_update_reg_defaults_2_0 = 0x28bf6ca5;
-__crc_wsa881x_update_regmap_2_0 = 0xc6c8d4c2;
-__crc_wsa881x_get_temp = 0x60368849;
-__crc_wsa881x_init_thermal = 0xaa559e6a;
-__crc_wsa881x_deinit_thermal = 0xa142f310;

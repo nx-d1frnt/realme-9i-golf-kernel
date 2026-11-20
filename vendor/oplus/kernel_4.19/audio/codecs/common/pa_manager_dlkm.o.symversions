@@ -1,6 +1,0 @@
-__crc_oplus_add_pa_manager_snd_controls = 0x0d470f18;
-__crc_oplus_add_analog_pa_manager_dapm = 0x1393fdb9;
-__crc_get_speaker_dev = 0xb375dae7;
-__crc_get_speaker_manufacturer = 0x0d53a795;
-__crc_oplus_speaker_pa_register = 0xc8887370;
-__crc_oplus_speaker_pa_unregister = 0x02be9bdc;

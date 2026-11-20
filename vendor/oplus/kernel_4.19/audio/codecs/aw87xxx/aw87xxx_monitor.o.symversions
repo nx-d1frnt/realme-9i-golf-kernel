@@ -1,5 +1,0 @@
-__crc_aw_get_dsp_msg_data = 0x1dd025c3;
-__crc_aw87xxx_monitor_stop = 0xf057be2d;
-__crc_aw87xxx_monitor_work_func = 0x191b2372;
-__crc_aw87xxx_monitor_init = 0x1715d72c;
-__crc_aw87xxx_parse_monitor_dt = 0xaea57ead;

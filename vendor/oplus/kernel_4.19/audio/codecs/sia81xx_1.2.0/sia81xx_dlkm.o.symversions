@@ -1,6 +1,0 @@
-__crc_soc_sia81xx_get_aux_num = 0x59e42382;
-__crc_soc_sia81xx_get_codec_conf_num = 0xeb64c4cc;
-__crc_soc_sia81xx_init = 0x27987b7d;
-__crc_soc_sia81xx_deinit = 0x2372669d;
-__crc_soc_aux_init_only_sia81xx = 0x77638a5e;
-__crc_soc_aux_deinit_only_sia81xx = 0xad58a01a;

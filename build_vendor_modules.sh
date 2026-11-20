@@ -6,13 +6,27 @@ SRC="$ROOT/kernel/msm-4.19"
 OUT="${OUT:-$ROOT/out}"
 MOD_OUT="${MOD_OUT:-$ROOT/out_modules}"
 
-TOOLCHAIN_DIR="${TOOLCHAIN_DIR:-/mnt/40608C3F38E3B991/golf2rom/toolchains}"
-CLANG_BIN="$TOOLCHAIN_DIR/clang-r383902/bin"
-BINUTILS_BIN="$TOOLCHAIN_DIR/proton-clang/bin"
+TOOLCHAIN_DIR="${TOOLCHAIN_DIR:-$ROOT/toolchains}"
+CLANG_BIN="${CLANG_BIN:-$TOOLCHAIN_DIR/clang-r383902/bin}"
+BINUTILS_BIN="${BINUTILS_BIN:-$TOOLCHAIN_DIR/proton-clang/bin}"
 
 export PATH="$CLANG_BIN:$BINUTILS_BIN:$PATH"
 export ARCH=arm64
 export SUBARCH=arm64
+
+for tool in clang ld.lld llvm-strip aarch64-linux-gnu-as; do
+  if ! command -v "$tool" >/dev/null 2>&1; then
+    echo "Error: required tool '$tool' not found in PATH ($CLANG_BIN:$BINUTILS_BIN)." >&2
+    echo "Set CLANG_BIN and BINUTILS_BIN (or TOOLCHAIN_DIR) before running." >&2
+    exit 1
+  fi
+done
+
+if [[ ! -f "$OUT/Module.symvers" || ! -f "$OUT/certs/signing_key.pem" ]]; then
+  echo "Error: missing kernel build outputs in $OUT (Module.symvers / signing_key.pem)." >&2
+  echo "Run ./build.sh build first with matching OUT_DIR." >&2
+  exit 1
+fi
 
 MAKE_COMMON=(
   -j"$(nproc)"
@@ -44,7 +58,7 @@ echo "=== Cleaning stale module build artifacts ==="
 find "$ROOT/vendor/qcom/opensource/audio-kernel" \
      "$ROOT/vendor/oplus/kernel_4.19/audio" \
      "$ROOT/vendor/qcom/opensource/wlan/qcacld-3.0" \
-     \( -name '*.o' -o -name '*.ko' -o -name '*.mod.c' -o -name '*.cmd' -o -name 'Module.symvers' -o -name 'modules.order' \) \
+     \( -name '*.o' -o -name '*.ko' -o -name '*.mod.c' -o -name '*.cmd' -o -name '*.o.symversions' -o -name 'Module.symvers' -o -name 'modules.order' \) \
      -delete
 
 EXTRA_SYMS=""
