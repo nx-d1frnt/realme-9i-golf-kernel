@@ -1,3 +1,6 @@
+#ifdef CONFIG_KSU_SUSFS
+#include <linux/susfs_def.h>
+#endif
 #include <linux/compiler.h>
 #include <linux/version.h>
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 11, 0)
@@ -14,6 +17,7 @@
 #include <linux/uaccess.h>
 #include <linux/uidgid.h>
 
+#include "selinux/selinux.h"
 #include "policy/app_profile.h"
 #include "policy/allowlist.h"
 #include "policy/app_profile.h"
@@ -28,6 +32,12 @@
 
 int ksu_handle_setresuid(uid_t old_uid, uid_t new_uid)
 {
+#ifdef CONFIG_KSU_SUSFS
+    if (is_uid_manager(new_uid) || ksu_is_allow_uid_for_current(new_uid))
+        current->susfs_task_state &= ~TASK_STRUCT_NON_ROOT_USER_APP_PROC;
+    else if (is_zygote(current_cred()) && new_uid >= 10000)
+        current->susfs_task_state |= TASK_STRUCT_NON_ROOT_USER_APP_PROC;
+#endif
     // we rely on the fact that zygote always call setresuid(3) with same uids
 
     pr_info("handle_setresuid from %d to %d\n", old_uid, new_uid);

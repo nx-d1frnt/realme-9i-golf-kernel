@@ -64,6 +64,12 @@ void on_post_fs_data(void)
 	done = true;
 	pr_info("on_post_fs_data!\n");
 
+#ifdef CONFIG_KSU_SUSFS
+    {
+        extern void ksu_susfs_on_post_fs_data(void);
+        ksu_susfs_on_post_fs_data();
+    }
+#endif
 	ksu_load_allow_list();
 	ksu_observer_init();
 	/* After the observer is up, so a ksud install can't slip in between. */

@@ -1,0 +1,2 @@
+__crc_pm2250_spmi_write = 0x1c5415ab;
+__crc_pm2250_spmi_read = 0xeefd8906;

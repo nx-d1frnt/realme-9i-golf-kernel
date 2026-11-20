@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" fill="none">
+  <defs>
+    <linearGradient id="bg-grad" x1="0" y1="0" x2="1280" y2="640" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#090D12"/>
+      <stop offset="100%" stop-color="#0E151D"/>
+    </linearGradient>
+
+    <radialGradient id="soft-glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(640 310) rotate(90) scale(260 440)">
+      <stop offset="0%" stop-color="#10B981" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#090D12" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="accent-grad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#34D399"/>
+      <stop offset="100%" stop-color="#22D3EE"/>
+    </linearGradient>
+  </defs>
+
+  <g id="Background">
+    <rect width="1280" height="640" fill="url(#bg-grad)"/>
+    <rect width="1280" height="640" fill="url(#soft-glow)"/>
+  </g>
+
+  <g id="Content">
+    <text x="640" y="320" text-anchor="middle" font-family="Inter, 'Segoe UI', Roboto, Ubuntu, sans-serif" font-size="112" font-weight="800" letter-spacing="-3.5" fill="#F8FAFC">Golf<tspan fill="url(#accent-grad)">Core</tspan></text>
+
+    <rect x="600" y="352" width="80" height="3" rx="1.5" fill="url(#accent-grad)" opacity="0.85"/>
+
+    <text x="640" y="398" text-anchor="middle" font-family="Inter, 'Segoe UI', Roboto, Ubuntu, sans-serif" font-size="24" font-weight="500" letter-spacing="0.5" fill="#94A3B8">Realme 9i 4G  •  Linux 4.19.157</text>
+  </g>
+</svg>

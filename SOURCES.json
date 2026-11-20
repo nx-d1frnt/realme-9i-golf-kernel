@@ -14,7 +14,8 @@
     "04-ion-drop-empty-constructor.patch": "7168dff1715e1e7f1590dd5c1a62bdd7ac8a2fcaaa3355fead45bc971e21d87c",
     "05-zram-validate-allocator-flags.patch": "61f352ed2bbb8b80c8dec4b134268b924339fda384873400714a667fb44ad450",
     "06-touch-resume-irq-lifetime.patch": "e253ca94d776326c529c25db901147f21068c8532d2720c9d2b1acf96205dcb7",
-    "07-lz4-v1.10-neutrino.patch": "e2bfc8307abcea4561782f821acc1f3180949fb5cc36d5d2bda545c823ff44a3"
+    "07-lz4-v1.10-neutrino.patch": "e2bfc8307abcea4561782f821acc1f3180949fb5cc36d5d2bda545c823ff44a3",
+    "15-susfs-kernel-next.patch": "03c0cd1be0bab449a0b7ce8e32237d55ec73311158f9a86b89dadab6034221aa"
   },
   "lz4_donor": {
     "repository": "https://github.com/Madara273/Redmi-Note-11-Kernel",
@@ -51,5 +52,25 @@
       }
     },
     "declared_lz4_version": "1.10.0"
+  },
+  "susfs": {
+    "repository": "https://gitlab.com/simonpunk/susfs4ksu.git",
+    "branch": "kernel-4.19",
+    "commit": "001e69919c6271f690fd00b17e4c721c9e599152",
+    "version": "1.5.5",
+    "integration": "Oplus 4.19.157 + in-tree KernelSU-Next 3.3.0, manual hooks; legacy prctl control ABI",
+    "upstream_files": {
+      "kernel_patches/50_add_susfs_in_kernel-4.19.patch": "818032e63fb25574c66d0130a9a66a31c80f0b681f5d99fc1f96a50c251934f2",
+      "kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch": "25056cc600a0c5a4dd395990d19ddda690fb3aaafb824c963389698547c025d4",
+      "kernel_patches/fs/sus_su.c": "91f4d53f626f8038a465ecbdafe8766ecdf66ebccdf0d40f4775504a29a316f5",
+      "kernel_patches/fs/susfs.c": "cd117f5a7900048fdf2abf87d70ef65c01c634b2ff6ccf8fe079fbd6766d7251",
+      "kernel_patches/include/linux/sus_su.h": "22fdf92a231a03a81f895ae4eed3d2b130cab054c8c99d863c4df787b51d52dc",
+      "kernel_patches/include/linux/susfs.h": "fb0b83e9f4188d8887e8a63554bf8c551cdf7544924da93e973f7d2ea19451b8",
+      "kernel_patches/include/linux/susfs_def.h": "b40f4018de7aa9c5b93b2973b9e4ed2eaaeb0bacbe02e4df8376eac13d309bf3"
+    },
+    "userspace_tool": {
+      "source": "ksu_module_susfs/tools/ksu_susfs_arm64",
+      "sha256": "bede84fa36afd8130423a1c6cc4154c0e6312d00cfa161e594d78fa83347934f"
+    }
   }
 }

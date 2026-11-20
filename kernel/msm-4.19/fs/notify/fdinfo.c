@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: GPL-2.0
 #include <linux/file.h>
 #include <linux/fs.h>
+#ifdef CONFIG_KSU_SUSFS_SUS_KSTAT
+#include <linux/susfs.h>
+#endif
 #include <linux/fsnotify_backend.h>
 #include <linux/idr.h>
 #include <linux/init.h>
@@ -13,6 +16,9 @@
 #include <linux/seq_file.h>
 #include <linux/proc_fs.h>
 #include <linux/exportfs.h>
+#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
+#include <linux/susfs_def.h>
+#endif
 
 #include "inotify/inotify.h"
 #include "fsnotify.h"
@@ -22,8 +28,8 @@
 #if defined(CONFIG_INOTIFY_USER) || defined(CONFIG_FANOTIFY)
 
 static void show_fdinfo(struct seq_file *m, struct file *f,
-			void (*show)(struct seq_file *m,
-				     struct fsnotify_mark *mark))
+                       void (*show)(struct seq_file *m,
+                                    struct fsnotify_mark *mark))
 {
 	struct fsnotify_group *group = f->private_data;
 	struct fsnotify_mark *mark;
@@ -90,6 +96,20 @@ static void inotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark)
 		 * used only internally to the kernel.
 		 */
 		u32 mask = mark->mask & IN_ALL_EVENTS;
+#ifdef CONFIG_KSU_SUSFS_SUS_KSTAT
+		if ((current->susfs_task_state & TASK_STRUCT_NON_ROOT_USER_APP_PROC) &&
+		    (inode->i_state & INODE_STATE_SUS_KSTAT)) {
+			struct kstat stat = { .ino = inode->i_ino, .dev = inode->i_sb->s_dev };
+
+			susfs_sus_ino_for_generic_fillattr(inode->i_ino, &stat);
+			seq_printf(m, "inotify wd:%x ino:%lx sdev:%x mask:%x ignored_mask:%x ",
+				   inode_mark->wd, stat.ino, stat.dev, mask, mark->ignored_mask);
+			show_mark_fhandle(m, inode);
+			seq_putc(m, '\n');
+			iput(inode);
+			return;
+		}
+#endif
 		seq_printf(m, "inotify wd:%x ino:%lx sdev:%x mask:%x ignored_mask:%x ",
 			   inode_mark->wd, inode->i_ino, inode->i_sb->s_dev,
 			   mask, mark->ignored_mask);

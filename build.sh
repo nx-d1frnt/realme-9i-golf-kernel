@@ -3,7 +3,7 @@ set -euo pipefail
 ROOT=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 SRC=${KERNEL_DIR:-"$ROOT/kernel/msm-4.19"}
 OUT=${OUT_DIR:-"$ROOT/out"}
-ARTIFACTS=${ARTIFACTS_DIR:-"$ROOT/artifacts"}
+ARTIFACTS=${ARTIFACTS_DIR:-"$ROOT/artifacts/susfs"}
 TC=${CLANG_BIN:-"$ROOT/toolchains/clang-r383902/bin"}
 BINUTILS=${BINUTILS_BIN:-"$ROOT/toolchains/proton-clang/bin"}
 MODE=${1:-build}
@@ -26,7 +26,7 @@ if [[ -f /usr/lib/libcrypto.so.3 ]]; then
   ARGS+=(HOSTLDLIBS_sign-file=-l:libcrypto.so.3 HOSTLDLIBS_extract-cert=-l:libcrypto.so.3)
 fi
 cp "$ROOT/config/stock.config" "$OUT/.config"
-"$SRC/scripts/config" --file "$OUT/.config" --set-str LOCALVERSION '-GolfCore-v0.6'
+"$SRC/scripts/config" --file "$OUT/.config" --set-str LOCALVERSION '-GolfCore-v0.6-susfs'
 "$SRC/scripts/config" --file "$OUT/.config" --set-str SYSTEM_TRUSTED_KEYS "$ROOT/certs/stock-module-cert.pem"
 "$SRC/scripts/config" --file "$OUT/.config" \
   --enable TCP_CONG_ADVANCED \
@@ -60,11 +60,41 @@ cp "$ROOT/config/stock.config" "$OUT/.config"
   --disable KPROBES \
   --disable SLUB_DEBUG \
   --disable FTRACE \
+  --enable JUMP_LABEL \
+  --disable SCHEDSTATS \
+  --enable WQ_POWER_EFFICIENT_DEFAULT \
   --enable KSU \
   --disable KSU_SYSCALL_TABLE_HOOK \
   --disable KSU_KPROBES_HOOK \
-  --enable KSU_MANUAL_HOOK
+  --enable KSU_MANUAL_HOOK \
+  --enable KSU_SUSFS \
+  --enable KSU_SUSFS_SUS_PATH \
+  --enable KSU_SUSFS_SUS_MOUNT \
+  --enable KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT \
+  --enable KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT \
+  --enable KSU_SUSFS_SUS_KSTAT \
+  --disable KSU_SUSFS_SUS_OVERLAYFS \
+  --enable KSU_SUSFS_TRY_UMOUNT \
+  --enable KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT \
+  --enable KSU_SUSFS_SPOOF_UNAME \
+  --enable KSU_SUSFS_ENABLE_LOG \
+  --enable KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS \
+  --enable KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG \
+  --enable KSU_SUSFS_OPEN_REDIRECT \
+  --enable KSU_SUSFS_HAS_MAGIC_MOUNT
 make "${ARGS[@]}" olddefconfig > "$ARTIFACTS/configure.log" 2>&1
+python3 - "$OUT/.config" <<'PYCONFIG'
+import sys
+config = set(open(sys.argv[1]).read().splitlines())
+required = ['KSU', 'KSU_MANUAL_HOOK', 'KSU_SUSFS', 'KSU_SUSFS_SUS_MOUNT',
+            'KSU_SUSFS_SUS_KSTAT', 'KSU_SUSFS_TRY_UMOUNT',
+            'JUMP_LABEL', 'WQ_POWER_EFFICIENT_DEFAULT']
+missing = [key for key in required if 'CONFIG_' + key + '=y' not in config]
+if missing:
+    raise SystemExit('Required KernelSU/SUSFS options missing: ' + ', '.join(missing))
+if 'CONFIG_SCHEDSTATS=y' in config:
+    raise SystemExit('CONFIG_SCHEDSTATS=y must be disabled')
+PYCONFIG
 cp "$OUT/.config" "$ARTIFACTS/resolved.config"
 python3 "$SRC/scripts/diffconfig" "$ROOT/config/stock.config" "$OUT/.config" > "$ARTIFACTS/config-diff.txt"
 python3 - "$ROOT/config/stock.config" "$OUT/.config" <<'PY'
@@ -115,6 +145,8 @@ allowed = {
     'CONFIG_FTRACE',
     'CONFIG_BRANCH_PROFILE_NONE',
     'CONFIG_TRACING_EVENTS_GPIO',
+    'CONFIG_SCHEDSTATS',
+    'CONFIG_SCHED_INFO',
 }
 changed = [key for key, value in stock.items() if key not in allowed and actual.get(key) != value]
 if changed:

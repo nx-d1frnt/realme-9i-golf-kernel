@@ -1,0 +1,6 @@
+__crc_snd_event_client_register = 0xc08140c9;
+__crc_snd_event_client_deregister = 0x0aee3463;
+__crc_snd_event_mstr_add_client = 0x5c2513df;
+__crc_snd_event_master_register = 0xc7040f56;
+__crc_snd_event_master_deregister = 0x0f33589b;
+__crc_snd_event_notify = 0x08913f2b;

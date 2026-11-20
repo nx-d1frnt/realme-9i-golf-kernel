@@ -1,0 +1,5 @@
+__crc_wcd937x_soc_get_mbhc = 0x773efe8d;
+__crc_wcd937x_get_micb_vout_ctl_val = 0x0d992a40;
+__crc_wcd937x_mbhc_micb_adjust_voltage = 0x0ba4d6d4;
+__crc_wcd937x_micbias_control = 0x640df8f4;
+__crc_wcd937x_info_create_codec_entry = 0xb2498058;

@@ -1,3 +1,6 @@
+#ifdef CONFIG_KSU_SUSFS_TRY_UMOUNT
+#include <linux/susfs.h>
+#endif
 #include <linux/sched.h>
 #include <linux/slab.h>
 #include <linux/task_work.h>
@@ -105,6 +108,9 @@ static void umount_tw_func(struct callback_head *cb)
 	const struct cred *saved = override_creds(ksu_cred);
 
     struct mount_entry *entry;
+#ifdef CONFIG_KSU_SUSFS_TRY_UMOUNT
+    susfs_try_umount(current_uid().val);
+#endif
     down_read(&mount_list_lock);
     list_for_each_entry(entry, &mount_list, list) {
         pr_info("%s: unmounting: %s flags: 0x%x\n", __func__, entry->umountable, entry->flags);
@@ -121,10 +127,12 @@ int ksu_handle_umount(uid_t old_uid, uid_t new_uid)
 {
 	struct umount_tw *tw;
 
+#ifndef CONFIG_KSU_SUSFS_TRY_UMOUNT
 	// if there isn't any module mounted, just ignore it!
 	if (!ksu_module_mounted) {
 		return 0;
 	}
+#endif
 
 	if (!ksu_kernel_umount_enabled) {
 		return 0;
@@ -187,3 +195,26 @@ void __exit ksu_kernel_umount_exit(void)
 {
 	ksu_unregister_feature_handler(KSU_FEATURE_KERNEL_UMOUNT);
 }
+
+#ifdef CONFIG_KSU_SUSFS_TRY_UMOUNT
+extern bool susfs_is_mnt_devname_ksu(struct path *path);
+
+void ksu_try_umount(const char *mnt, bool check_mnt, int flags, uid_t uid)
+{
+    struct path path;
+
+    if (kern_path(mnt, 0, &path))
+        return;
+    if (path.dentry != path.mnt->mnt_root ||
+        (check_mnt && !susfs_is_mnt_devname_ksu(&path))) {
+        path_put(&path);
+        return;
+    }
+    ksu_umount_mnt(mnt, &path, flags);
+}
+
+void susfs_try_umount_all(uid_t uid)
+{
+    susfs_try_umount(uid);
+}
+#endif

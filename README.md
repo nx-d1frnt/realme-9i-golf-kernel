@@ -1,5 +1,10 @@
 # GolfCore — Realme 9i 4G / RMX3491
 
+Текущая рабочая интеграция: **GolfCore v0.6 + SUSFS 1.5.5 NON-GKI** с
+KernelSU-Next и ручными хуками. Сборка сохраняет новые артефакты в
+`artifacts/susfs/`. Настройка, совместимость и статус проверки:
+[docs/SUSFS.md](docs/SUSFS.md).
+
 Экспериментальное ядро **4.19.157-GolfCore-v0.3 для Realme 9i 4G / RMX3491**.
 Кандидат **GolfCore v0.3.0-rc1 Balanced** добавляет явное имя релиза и
 LZ4 1.10.0 из зафиксированных исходников Neutrino для Redmi Note 11.

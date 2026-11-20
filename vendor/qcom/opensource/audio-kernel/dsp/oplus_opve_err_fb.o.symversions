@@ -1,0 +1,4 @@
+__crc_oplus_opve_err_fb_add_controls = 0x41afcb1e;
+__crc_oplus_opve_copy_voice_err_result = 0x3b4f9ec9;
+__crc_oplus_adm_get_opve_err_fb = 0x120e4adf;
+__crc_oplus_voice_get_opve_err_fb = 0x6c38ac93;
